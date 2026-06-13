@@ -9,11 +9,10 @@
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #030508; color: #dcdcdc; /* 冥河極寒深藍黑 */
+            background-color: #030508; color: #dcdcdc; 
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
             overflow: hidden; -webkit-user-select: none; user-select: none;
         }
-        /* 北側特殊氛圍：冰封的深藍晶瑩殘影 */
         .ambient-north {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 30%, rgba(74, 144, 226, 0.03) 0%, rgba(3, 5, 8, 0) 75%);
@@ -31,7 +30,6 @@
         }
         .story-paragraph.visible { opacity: 1; }
 
-        /* 偏廳高質感交互按鈕 */
         .action-container {
             display: none; width: 100%; max-width: 650px; margin: 15px auto 0 auto;
             text-align: center; animation: fadeInMenu 1.5s ease-in-out forwards; pointer-events: auto;
@@ -49,7 +47,6 @@
             background-color: rgba(74, 144, 226, 0.03); box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
         }
 
-        /* 十二星座極簡矩陣面板 */
         .zodiac-grid {
             display: none; grid-template-columns: repeat(3, 1fr); gap: 12px;
             max-width: 600px; margin: 20px auto; pointer-events: auto;
@@ -65,7 +62,6 @@
             background-color: rgba(74, 144, 226, 0.02);
         }
 
-        /* 最終命運卡牌 THE FOOL 特效 */
         .fool-card-zone {
             display: none; text-align: center; margin-top: 25px; pointer-events: auto;
             animation: fadeInMenu 1.8s ease-in-out forwards;
@@ -103,14 +99,12 @@
         <div class="game-stage">
             <div class="story-wrapper" id="storyWrapper"></div>
 
-            <!-- 階段一按鈕：邁向死路 -->
             <div class="action-container" id="initActionZone">
                 <button class="menu-button" onclick="goToDeadEnd(event)">
                     🧭 走入毫無弱點的未來
                 </button>
             </div>
 
-            <!-- 階段二面板：時間倒流後的異變十二星座星盤 -->
             <div class="zodiac-grid" id="zodiacGrid" onclick="event.stopPropagation()">
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">白羊座</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">金牛座</button>
@@ -123,10 +117,9 @@
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">射手座</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">摩羯座</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">水瓶座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(true)">雙魚座</button> <!-- 正確答案 -->
+                <button class="zodiac-btn" onclick="chooseZodiac(true)">雙魚座</button>
             </div>
 
-            <!-- 階段三：獲取愚者卡牌區 -->
             <div class="fool-card-zone" id="foolCardZone" onclick="event.stopPropagation()">
                 <div class="tarot-title">THE FOOL</div>
                 <div class="tarot-hint">「這是未來的宿命。帶著它返回大廳。」</div>
@@ -138,7 +131,6 @@
     </div>
 
     <script>
-        // 【劇本A】首次進入入口描述
         const initScript = [
             { text: "你走向北側。空氣驟然變冷，冷得像有人在你皮膚底下塞了一層薄冰。" },
             { text: "那扇門覆蓋著黑色的冰霜。冰不是透明的——它是渾濁的、不反光的，像從冥河最底部撈上來的結晶。你伸手觸碰門面，指尖沒有感覺到冰的刺痛，只有一種遙遠的麻木，彷彿這扇門不存在於你的溫度感知範圍之內。" },
@@ -146,13 +138,12 @@
             { text: "你跨過門檻，走入了宴會廳最深的死角。" },
             { text: "這裡比任何地方都更冷。冷到你的每一次呼吸都凝結成細小的白色霧團，懸浮在空氣中，久久不散。牆壁不是石頭，而是黑色的、會吸光的物質，像凝固的深淵。沒有燭火，沒有吊燈，唯一的光源來自地面——那裡有一條黑色的河流，靜止不動，卻在你的注視下微微顫動。" },
             { text: "冥河。你沒有見過它，但你的身體認識它。你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。<br><br>阿基里斯就站在河的正中央。" },
-            { text: "他像一尊戰神雕像，按劍而立，右手纏著繃帶，腳踝處裸露的皮膚在黑暗中散發著微弱的金色光芒。他的雙眼睜開，凝視著不存在的遠方，瞳孔裡沒有倒影。冥河的水汽在他腳下擴散，形成了一道無法逾越的冰界——那不是牆，而是一種「你不能靠近」的法則，刻在你的骨頭裡，像與生來的恐懼。" },
+            { text: "他像一尊戰神雕像，按劍而立，右手纏著繃帶，腳踝處裸露的皮膚在黑暗中散發著微弱的金色光芒。他的雙眼睜開，凝視著不存在的遠方，瞳孔裡沒有倒影。冥河的水汽在他腳下擴散，形成了一道無法逾越的冰界——那不是牆，而一種「你不能靠近」的法則，刻在你的骨頭裡，像與生俱來的恐懼。" },
             { text: "他的身體沒有任何傷痕。沒有任何弱點。你知道那個神話——他連腳踝都浸入了冥河。在這個時空裡，他是一隻沒有致命處的怪物，一個打破了宿命的半神。<br><br>在他面前，虛空中懸浮著一座巨大的青銅星盤。星盤的邊緣刻著十二個星座符號，但它們沒有發光，沒有運轉。星盤的中央是一根指針，指向……什麼都沒有。指針懸空，猶豫不決，像一個站在懸崖邊緣的人。" },
             { text: "結界邊緣的牆上，浮現著一行幾乎被磨滅的文字。字跡不是刻上去的，而是像被水漬浸出來的，模糊、顫抖，像將死之人最後的呼吸：<br>「半神之軀，其命運始於雙子，困於巨蟹。貪戀不死的英雄，將致命的腳踝也交給了冥河。他抹去了一切弱點，成為無法戰勝的怪物，妄圖以此違抗黃道的終點。」" },
             { text: "你讀完最後一個字，那行文字忽然開始流血。紅色的液體從牆上滲出來，匯聚成新的句子：<br>「凡人，前方已是死路。想要破除不死的威壓，你必須先親自步入他那沒有弱點的絕望未來……然後，尋找折返的步伐。」", triggerActionBtn: true }
         ];
 
-        // 【劇本B】上一頁折返後的「異變時間倒流」劇本
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
@@ -161,7 +152,6 @@
             { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的最後一宮。那是神明降下的懲罰。」", triggerZodiacGrid: true }
         ];
 
-        // 【劇本C】解鎖正確後的命運劇本
         const winScript = [
             { text: "你將指針撥向雙魚座。星盤發出一聲低沉的轟鳴，像古老的齒輪咬合。十二個符號同時熄滅，只剩雙魚座的那一對魚型圖騰，燒成熾熱的白色。" },
             { text: "阿基里斯的雕像從腳踝開始碎裂。裂痕向上蔓延，穿過膝蓋、腰腹、胸膛，直到他的臉。他沒有發出聲音——雕像不應該發出聲音——但你聽見了某種遙遠的、像風穿過廢墟的哀鳴。" },
@@ -178,17 +168,27 @@
         const zodiacGrid = document.getElementById("zodiacGrid");
         const foolCardZone = document.getElementById("foolCardZone");
 
-        // 核心智慧狀態閥：檢測是否是從死路折返
-        window.onload = function() {
+        // 【終極修復】全面改用 pageshow 事件，徹底破除瀏覽器 Page Cache 網頁快照鎖死
+        window.addEventListener('pageshow', function(event) {
+            // 初始化控制變數，防止狀態殘留
+            storyWrapper.innerHTML = "";
+            initActionZone.style.display = "none";
+            zodiacGrid.style.display = "none";
+            foolCardZone.style.display = "none";
+            clickHint.style.display = "block";
+            isWaitingMenu = false;
+            textAnimationLock = false;
+            currentIndex = 0;
+
+            // 只要死路標記被觸發（無論是正常換網址還是上一頁折返）
             if (localStorage.getItem("future_dead_end_reached") === "true") {
-                // 清除死路標記，防止反覆觸發，切換到倒流劇本
                 localStorage.removeItem("future_dead_end_reached");
                 currentScript = timeReverseScript;
             } else {
                 currentScript = initScript;
             }
             showNextParagraph();
-        };
+        });
 
         function gameContainerClicked() {
             if (textAnimationLock || isWaitingMenu) return;
@@ -219,7 +219,6 @@
 
         function goToDeadEnd(event) {
             event.stopPropagation();
-            // 標記已經踩入死路，供上一頁返回時讀取狀態
             localStorage.setItem("future_dead_end_reached", "true");
             window.location.href = "dead_end.html";
         }
@@ -231,12 +230,11 @@
                 showNextParagraph();
             } else {
                 alert("星盤指針猛地反轉，一道寒氣將你凍結在原地。錯誤的選擇。阿基里斯的威壓沒有減弱，反而更重。你無法動彈，只能永遠站在這裡，成為他的陪葬。");
-                window.location.reload(); // 選錯直接將偏廳重置
+                window.location.reload();
             }
         }
 
         function returnToCloser() {
-            // 寫入未來解謎進度到永久狀態矩陣
             localStorage.setItem("future_puzzle_solved", "true");
             window.location.href = "thecloser.html";
         }
