@@ -66,16 +66,24 @@
         }
         .submit-btn:hover { border-color: #9b59b6; color: #fff; }
 
-        /* 最終離開按鈕 - 加上流暢的慢慢浮現動畫 */
+        /* 最終離開按鈕包裹層與動畫優化 */
+        .btn-fade-wrapper {
+            display: none; width: 100%; text-align: center; opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 1.8s ease-in-out, transform 1.8s ease-in-out;
+        }
+        .btn-fade-wrapper.fade-in-active {
+            opacity: 1; transform: translateY(0);
+        }
         .return-hall-btn {
-            display: none; background: none; border: 1px solid #dfb76c; color: #dfb76c;
+            background: none; border: 1px solid #dfb76c; color: #dfb76c;
             padding: 15px 30px; margin: 30px auto 0 auto; font-size: 11pt; letter-spacing: 2px;
             cursor: pointer; pointer-events: auto; transition: all 0.3s; text-align: center;
-            animation: fadeInElement 1.8s ease-in-out forwards; /* 慢慢浮現 */
+            display: inline-block;
         }
         .return-hall-btn:hover { background-color: #dfb76c; color: #000; box-shadow: 0 0 15px rgba(223,183,108,0.3); }
 
-        /* 關鍵字：欲望發光 */
+        /* 關鍵字：欲望雙重發光 */
         .highlight-desire-glow {
             color: #b32f2f; font-weight: bold; display: inline-block;
             text-shadow: 0 0 10px #b32f2f, 0 0 25px rgba(138, 43, 226, 0.8);
@@ -112,8 +120,8 @@
                 <div id="errorMsg" style="color: #b32f2f; margin-top: 15px; font-size: 11pt; display: none;">那不是她等待的詞語。再試一次。</div>
             </div>
 
-            <div style="text-align: center;">
-                <button class="return-hall-btn" id="returnHallBtn" onclick="navigateToCloser(event)">
+            <div class="btn-fade-wrapper" id="btnWrapper">
+                <button class="return-hall-btn" onclick="navigateToCloser(event)">
                     回到最初的宴會廳
                 </button>
             </div>
@@ -133,7 +141,7 @@
             { text: "那一瞬間，女人手中的酒杯發出了輕微的震動。不是聲音，而是你看見酒液表面出現了漣漪——在這個一切靜止的世界裡，漣漪不應該存在。它們一圈一圈地擴散，像有人在很遠的地方投下了一顆石子。" },
             { text: "她的睫毛顫抖了。" },
             { text: "然後，她的雙眼緩緩亮起。不是反射光，而是從瞳孔深處燃燒出來的、暗紅色的火焰。那火焰沒有溫度，但你感覺自己的胸口被點燃了。" },
-            { text: "她轉動頸項——第一個能動的物體——然後對著你，展露了一個微笑。<br>那個笑容不是感謝，不是禮貌，不是憐憫。它是一種你從未見過的、完全的、純粹的魅惑。它像一根針，無聲地刺進你的心臟，刺進你的骨髓，刺進你每一個還在跳動的細胞。" },
+            { text: "她轉動頸項——第一個能動的物體──然後對著你，展露了一個微笑。<br>那個笑容不是感謝，不是禮貌，不是憐憫。它是一種你從未見過的、完全的、純粹的魅惑。它像一根針，無聲地刺進你的心臟，刺進你的骨髓，刺進你每一個還在跳動的細胞。" },
             { text: "你聽見自己的心跳聲越來越快，越來越響。像有人在你胸腔裡敲一扇永遠不會打開的門。" },
             { text: "她開口了。不是用嘴唇——她的嘴唇沒有動——而是直接在你的腦中，像一把刀劃開絲綢：<br>「你找到了正確的祭品。但你還不明白，對嗎？」" },
             { text: "她舉起那隻空杯，杯底殘留著一抹深紫色的痕跡。你忽然意識到，那痕跡的形狀像一隻眼睛。<br>「酒只是載體。沒有酒的夜晚，沒有酒杯的宴會，我依然能讓你站在這裡。你以為是你找到了我，其實是——我在等你。」" },
@@ -141,7 +149,7 @@
             { text: "她將空杯翻轉，杯口朝下。沒有酒滴落下來——因為時間仍然是靜止的。但你看見，杯底的紫色痕跡正在緩慢地、無法解釋地移動，像一條蛇，爬出杯口，爬過她的手指，爬向你的方向。<br>你無法後退。<br>「那不是酒。那是——」" },
             { text: "她的唇無聲地吐出兩個字。你讀出來了。<br><div style='text-align:center; margin: 15px 0;'><span class='highlight-desire-glow'>欲望</span></div>那兩個字像是從你的身體裡長出來的，你一直知道它們，只是從未聽見。" },
             { text: "你的心臟猛地一跳。血液開始沸騰。你的視線變得模糊，只看得見她的臉。<br>你愛她。你瘋狂地、毫無理由地、不可救藥地愛上了她。從這一秒開始，直到你死去的那一天——不，也許死後也不會結束。" },
-            { text: "她的聲音再次響起，這一次帶著一絲幾乎察覺不到的悲傷：<br>「記住這個字，將它們寫在命題上。那是你與我之間唯一的鎖鏈。而你……永遠也解不開它。」" },
+            { text: "她的聲音再次響起，這一次帶著一絲幾乎察決不到的悲傷：<br>「記住這個字，將它們寫在命題上。那是你與我之間唯一的鎖鏈。而你……永遠也解不開它。」" },
             { text: "她又靜止了。但那條紫色的痕跡沒有消失，它纏繞在你的手腕上，像一條看不見的蛇，冰涼，灼燙，兩種矛盾的溫度同時存在。<br>你的手背上，什麼也沒有出現。但你感覺得到——那裡被烙印了。不是眼睛，不是葡萄藤，而是一個你無法看見、卻永遠無法忘記的名字。", showReturnButton: true }
         ];
 
@@ -153,7 +161,7 @@
         const maskGrid = document.getElementById("maskGrid");
         const inputPanel = document.getElementById("inputPanel");
         const errorMsg = document.getElementById("errorMsg");
-        const returnHallBtn = document.getElementById("returnHallBtn");
+        const btnWrapper = document.getElementById("btnWrapper");
 
         function gameContainerClicked() {
             if (textAnimationLock || isWaitingMenu) return;
@@ -174,7 +182,7 @@
                     setTimeout(() => {
                         isWaitingMenu = true; clickHint.style.display = "none";
                         renderMaskGrid(); 
-                        maskGrid.style.display = "table"; // 慢慢浮現
+                        maskGrid.style.display = "table"; 
                         inputPanel.style.display = "block";
                     }, 1200);
                 }
@@ -182,7 +190,14 @@
                 if (lineData.showReturnButton) {
                     setTimeout(() => {
                         isWaitingMenu = true; clickHint.style.display = "none";
-                        returnHallBtn.style.display = "block"; // 慢慢浮現按鈕
+                        
+                        // 核心技術修復：強制刷新瀏覽器渲染序，完美觸發慢慢浮現動畫
+                        btnWrapper.style.display = "block"; 
+                        window.requestAnimationFrame(() => {
+                            setTimeout(() => {
+                                btnWrapper.classList.add("fade-in-active");
+                            }, 50);
+                        });
                     }, 1200);
                 }
             }
