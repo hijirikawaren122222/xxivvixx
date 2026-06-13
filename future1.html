@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌 北側：未來之廳 — 逆轉的星盤</title>
+    <title>未來之廳</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *,
@@ -84,7 +84,6 @@
             }
         }
 
-        /* 塔羅牌发光样式 */
         .tarot-card-glow {
             color: #4a90e2;
             font-weight: bold;
@@ -295,12 +294,14 @@
                 triggerActionBtn: true }
         ];
 
+        // 修改：拆分为两段，第一段无触发，第二段带触发
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
             { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。" },
             { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」" },
-            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」<br><br>星盤的光芒開始流轉，彷彿在催促你做出決定。",
+            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。" },
+            { text: "星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」<br><br>星盤的光芒開始流轉，彷彿在催促你做出決定。",
                 triggerZodiacGrid: true }
         ];
 
