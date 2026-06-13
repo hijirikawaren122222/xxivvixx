@@ -151,6 +151,17 @@
             background-color: rgba(74, 144, 226, 0.1);
         }
 
+        /* 愚者牌拾取按鈕容器 */
+        .fool-pickup-zone {
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            margin: 15px auto 0 auto;
+            text-align: center;
+            animation: fadeInElement 1.5s ease-in-out forwards;
+            pointer-events: auto;
+        }
+
         .fool-card-zone {
             display: none;
             text-align: center;
@@ -230,10 +241,12 @@
         <div class="game-stage">
             <div class="story-wrapper" id="storyWrapper"></div>
 
+            <!-- 初次进入：走入死路 -->
             <div class="action-container" id="initActionZone">
-                <button class="menu-button" onclick="goToDeadEnd(event)">走入毫無弱點的未來</button>
+                <button class="menu-button" onclick="goToDeadEnd(event)">🧭 走入毫無弱點的未來</button>
             </div>
 
+            <!-- 星盘选择面板 -->
             <div class="zodiac-grid" id="zodiacGrid" onclick="event.stopPropagation()">
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">LIBRA</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">LEO</button>
@@ -249,6 +262,12 @@
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">AQUARIUS</button>
             </div>
 
+            <!-- 拾取愚者牌按钮（点击后大字才出现） -->
+            <div class="fool-pickup-zone" id="foolPickupZone" onclick="event.stopPropagation()">
+                <button class="menu-button" onclick="pickupFoolCard(event)">🃏 拾起這張命運之牌</button>
+            </div>
+
+            <!-- 愚者牌展示区（大字 + 返回） -->
             <div class="fool-card-zone" id="foolCardZone" onclick="event.stopPropagation()">
                 <div class="tarot-title">THE FOOL</div>
                 <div class="tarot-hint">「這是未來的宿命。帶著它返回大廳。」</div>
@@ -272,22 +291,25 @@
                 triggerActionBtn: true }
         ];
 
+        // 时间倒流剧本：铭文与星盘分离
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
             { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。" },
-            { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」",
-                triggerNextPage: true },
-            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」",
-                triggerZodiacGrid: true }
+            { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」" },
+            // 修改点：将铭文单独作为一段，不触发任何面板
+            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」" },
+            // 新增：点击后出现星盘面板
+            { text: "星盤的光芒開始流轉，彷彿在催促你做出決定。", triggerZodiacGrid: true }
         ];
 
         const winScript = [
             { text: "你將指針撥向雙魚座。星盤發出一聲低沉的轟鳴，像古老的齒輪咬合。十二個符號同時熄滅，只剩雙魚座的那一對魚型圖騰，燒成熾熱的白色。" },
             { text: "阿基里斯的雕像從腳踝開始碎裂。裂痕向上蔓延，穿過膝蓋、腰腹、胸膛，直到他的臉。他沒有發出聲音——雕像不應該發出聲音——但你聽見了某種遙遠的、像風穿過廢墟的哀鳴。" },
             { text: "冥河的黑水完全倒流，縮回虛空中。冰界碎裂，化為一地黑色的碎屑，像燒過的紙灰。" },
+            // 修改点：牌面描述后不直接显示大字，而是显示拾取按钮
             { text: "在黑曜石桌的廢墟中，滾出一樣東西。那是一張塔羅牌，邊緣燒焦，牌面上畫著一個穿著華服的旅人，正踏向懸崖的邊緣。他的腳下是深淵，但他沒有低頭。他的身後有一隻白色的小狗在吠叫，但他沒有回頭。",
-                triggerFoolCard: true }
+                triggerFoolPickup: true }
         ];
 
         let currentScript = initScript;
@@ -299,12 +321,14 @@
         const clickHint = document.getElementById("clickHint");
         const initActionZone = document.getElementById("initActionZone");
         const zodiacGrid = document.getElementById("zodiacGrid");
+        const foolPickupZone = document.getElementById("foolPickupZone");
         const foolCardZone = document.getElementById("foolCardZone");
 
         window.addEventListener('pageshow', function(event) {
             storyWrapper.innerHTML = "";
             initActionZone.style.display = "none";
             zodiacGrid.style.display = "none";
+            foolPickupZone.style.display = "none";
             foolCardZone.style.display = "none";
             clickHint.style.display = "block";
             isWaitingMenu = false;
@@ -350,10 +374,11 @@
                         clickHint.style.display = "none";
                         zodiacGrid.style.display = "grid"; }, 1200);
                 }
-                if (lineData.triggerFoolCard) {
+                // 新增：处理愚者牌拾取按钮触发
+                if (lineData.triggerFoolPickup) {
                     setTimeout(() => { isWaitingMenu = true;
                         clickHint.style.display = "none";
-                        foolCardZone.style.display = "block"; }, 1200);
+                        foolPickupZone.style.display = "block"; }, 1200);
                 }
             }
         }
@@ -376,6 +401,16 @@
                 alert("星盤反轉，寒氣凍結了你。");
                 window.location.reload();
             }
+        }
+
+        // 点击拾取按钮后：隐藏拾取区，显示愚者牌大字与返回按钮
+        function pickupFoolCard(event) {
+            event.stopPropagation();
+            foolPickupZone.style.display = "none";
+            foolCardZone.style.display = "block";
+            // 保持菜单等待状态，防止背景点击继续推进
+            isWaitingMenu = true;
+            clickHint.style.display = "none";
         }
 
         function returnToCloser() {
