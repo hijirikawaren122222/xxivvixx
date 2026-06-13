@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍇 西側：現在之廳 — 第一間</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0a080d; color: #dcdcdc; 
+            font-family: 'Times New Roman', 'Noto Serif TC', serif;
+            overflow: hidden; -webkit-user-select: none; user-select: none;
+        }
+        .ambient-west {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 40%, rgba(138, 43, 226, 0.02) 0%, rgba(10, 8, 13, 0) 75%);
+            pointer-events: none; z-index: 10;
+        }
+        .game-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px 20px; cursor: pointer; z-index: 20;
+        }
+        .game-stage { position: block; max-width: 700px; margin: 80px auto 0 auto; pointer-events: none; }
+        .story-paragraph {
+            font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
+            transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
+        }
+        .story-paragraph.visible { opacity: 1; }
+
+        /* 字母矩陣外觀設計 */
+        .matrix-container {
+            margin: 25px auto; display: inline-block; pointer-events: auto;
+            border-collapse: collapse; font-family: monospace; font-size: 14pt; letter-spacing: 4px;
+        }
+        .matrix-cell {
+            padding: 5px 8px; color: #82589f; text-align: center; transition: all 0.3s;
+            text-shadow: 0 0 5px rgba(130, 88, 159, 0.4);
+        }
+        /* 懸停解鎖複製權限 */
+        .matrix-cell:hover {
+            color: #d11a2a; text-shadow: 0 0 10px #d11a2a; cursor: text;
+            -webkit-user-select: text; user-select: text;
+        }
+
+        .click-hint {
+            position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
+            font-size: 10pt; color: #494550; letter-spacing: 4px; animation: pulse 2.5s infinite; pointer-events: none;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+    <div class="ambient-west"></div>
+    <div class="game-container" id="gameContainer" onclick="gameContainerClicked()">
+        <div class="game-stage">
+            <div id="storyWrapper"></div>
+            <div style="text-align: center;">
+                <table class="matrix-container" id="matrixTable" onclick="event.stopPropagation()"></table>
+            </div>
+        </div>
+        <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
+    </div>
+
+    <script>
+        const scriptData = [
+            { text: "你改寫了路徑，來到第一間密室。" },
+            { text: "這裡只有狄奧尼索斯，以及他面前那張冰冷的石檯。檯面上整齊排列著十排、每排十個的字母矩陣，用深紅色的液體寫成——可能是酒，也可能是血。它們在黑暗中微微發光，像磷火，像溺死者的最後一次呼吸。" },
+            { text: "矩陣下方，有一行幾乎被磨損的銘文：<br>「凡人的目光被神明的酒霧遮蔽。唯有透過另一雙眼睛，才能看見真相。她手中有網。」" },
+            { text: "你盯著那些字母，試圖找出規律，但它們像隨機灑落的骰子，沒有任何單字或序列。你意識到，這裡只有一半的謎題。另一半在第二間密室。<br><br>保持這個頁面開啟。然後，去打開第二扇門。", isEnd: true }
+        ];
+
+        // 10x10 密碼矩陣數據（完美對應 W, I, N, E 的交叉點）
+        const letterMatrix = [
+            ["Q", "B", "W", "E", "R", "T", "Y", "U", "I", "O"],
+            ["P", "A", "S", "D", "F", "G", "H", "J", "K", "L"],
+            ["Z", "X", "C", "A", "W", "W", "N", "M", "A", "S"], // (3,6) = W
+            ["D", "F", "G", "H", "H", "J", "K", "L", "Q", "W"],
+            ["E", "I", "T", "Y", "I", "U", "I", "O", "P", "A"], // (5,2) = I
+            ["K", "L", "Z", "X", "C", "V", "B", "N", "M", "Q"],
+            ["W", "E", "R", "T", "Y", "U", "I", "O", "N", "P"], // (7,9) = N
+            ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Z"],
+            ["X", "C", "V", "E", "B", "N", "M", "Q", "W", "E"], // (9,4) = E
+            ["R", "T", "Y", "U", "I", "O", "P", "A", "S", "D"]
+        ];
+
+        let currentIndex = 0; let textAnimationLock = false;
+        const storyWrapper = document.getElementById("storyWrapper");
+        const clickHint = document.getElementById("clickHint");
+        const matrixTable = document.getElementById("matrixTable");
+
+        function gameContainerClicked() {
+            if (textAnimationLock) return;
+            if (currentIndex < scriptData.length) {
+                const line = scriptData[currentIndex];
+                textAnimationLock = true; clickHint.style.opacity = "0.1"; storyWrapper.innerHTML = "";
+                const p = document.createElement("div"); p.className = "story-paragraph"; p.innerHTML = line.text;
+                storyWrapper.appendChild(p);
+                setTimeout(() => { p.classList.add("visible"); }, 50);
+                currentIndex++;
+                setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
+
+                if (line.isEnd) {
+                    setTimeout(() => { 
+                        clickHint.style.display = "none";
+                        renderMatrix(); // 文字結束，渲染出矩陣
+                    }, 1200);
+                }
+            }
+        }
+
+        function renderMatrix() {
+            matrixTable.innerHTML = "";
+            for (let r = 0; r < 10; r++) {
+                const tr = document.createElement("tr");
+                for (let c = 0; r < 10; c++) {
+                    if (c >= 10) break;
+                    const td = document.createElement("td");
+                    td.className = "matrix-cell";
+                    td.innerText = letterMatrix[r][c];
+                    tr.appendChild(td);
+                }
+                matrixTable.appendChild(tr);
+            }
+        }
+        window.onload = gameContainerClicked;
+    </script>
+</body>
+</html>
