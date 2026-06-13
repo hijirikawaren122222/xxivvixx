@@ -268,7 +268,7 @@
         let currentIndex = 0;
         let isWaitingForChoice = false;
         let gameActive = false;
-        let textAnimationLock = false; // 新增：控制文字淡入動畫期間的點擊鎖
+        let textAnimationLock = false; 
 
         const titleScreen = document.getElementById("titleScreen");
         const storyWrapper = document.getElementById("storyWrapper");
@@ -291,7 +291,6 @@
         }
 
         function advanceText() {
-            // 如果遊戲尚未激活、正在等待選擇、或處於文字轉場鎖定狀態，直接阻斷點擊
             if (!gameActive || isWaitingForChoice || textAnimationLock) return;
             showNextParagraph();
         }
@@ -307,9 +306,8 @@
                     return;
                 }
 
-                // 觸發文字顯現，啟動動畫鎖
                 textAnimationLock = true;
-                clickHint.style.opacity = "0.1"; // 削弱點擊提示的亮度，提示玩家此時不能點
+                clickHint.style.opacity = "0.1"; 
                 storyWrapper.innerHTML = "";
 
                 const p = document.createElement("div");
@@ -320,18 +318,17 @@
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
 
-                // 隨著 CSS 轉場結束（1200毫秒），解除鎖定
                 setTimeout(() => {
                     textAnimationLock = false;
-                    clickHint.style.opacity = "1"; // 恢復點擊提示亮度
+                    clickHint.style.opacity = "1"; 
                 }, 1200);
 
                 if (lineData.isNextPage) {
-                    // 如果到了結尾頁，解除常規 advanceText，綁定換頁
                     setTimeout(() => {
                         clickHint.innerHTML = "【 摘下眼罩 】";
+                        // 關鍵修改：將目標換頁檔名更改為 thecloser.html
                         gameContainer.onclick = function() {
-                            window.location.href = "page2.html";
+                            window.location.href = "thecloser.html";
                         };
                     }, 1200);
                 }
