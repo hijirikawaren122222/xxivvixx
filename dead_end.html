@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>虛無</title>
+    <title>黑暗的虛無</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
@@ -17,10 +17,16 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
         }
-        .game-stage { position: block; max-width: 700px; margin: 120px auto 0 auto; pointer-events: none; }
+        .game-stage { 
+            position: block; max-width: 700px; margin: 160px auto 0 auto; pointer-events: none; 
+        }
+        
+        /* 核心轉場設計：文字浮現動畫與陰影 */
         .story-paragraph {
             font-size: 13pt; line-height: 2; letter-spacing: 2px; opacity: 0;
-            transition: opacity 1.5s ease-in-out; text-shadow: 0 0 8px rgba(255,255,255,0.2);
+            transition: opacity 1.8s ease-in-out; /* 調整為更緩慢地優雅浮現 */
+            text-shadow: 0 0 8px rgba(255,255,255,0.3);
+            text-align: center;
         }
         .story-paragraph.visible { opacity: 1; }
         
@@ -41,12 +47,22 @@
     </div>
 
     <script>
-        // 切分為四大獨立頁面的點擊劇本
+        // 將所有空白行與段落，精確拆解成獨立點擊的網頁 Page 劇本
         const scriptData = [
-            { text: "你踏入冰界的瞬間，世界碎裂了。<br>不是轟然崩塌，而是像一面鏡子從邊緣開始剝落，每一片碎片都映出不同的你——你站在暴雨中的你、你打開邀請函的你、你摘下眼罩的你。所有的你都在同一秒墜落，墜入同一個深不見底的黑暗。<br><br>然後，什麼都沒有了。<br>沒有光，沒有聲音，沒有溫度。沒有牆，沒有地板，沒有冥河，沒有阿基里斯。<br><br>你甚至不確定自己還有沒有身體。<br><br>黑暗中，浮現出一行白色的字。它不大，不閃爍，只是靜靜地存在著，像墓碑上的銘文：<br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
-            { text: "在這條死路的盡頭，死人不會再次開口。前進只會迎來永恆的虛無。" },
-            { text: "唯有謹記神明的神諭：逆天改命者，必遭宿命的清算。他既然抹去了起點的弱點，神明便將他的結局化為懲罰。" },
-            { text: "凡人，不要再執迷於前方的虛無。轉過身，讓你的時間倒流。踏上折返的歸途，回到你最初墜落的偏廳。", isEnd: true }
+            { text: "你踏入冰界的瞬間，世界碎裂了。" },
+            { text: "不是轟然崩塌，而是像一面鏡子從邊緣開始剝落，每一片碎片都映出不同的你——你站在暴雨中的你、你打開邀請函的你、你摘下眼罩的你。" },
+            { text: "所有的你都在同一秒墜落，墜入同一個深不見底的黑暗。" },
+            { text: "然後，什麼都沒有了。" },
+            { text: "沒有光，沒有聲音，沒有溫度。沒有牆，沒有地板，沒有冥河，沒有阿基里斯。" },
+            { text: "你甚至不確定自己還有沒有身體。" },
+            { text: "黑暗中，浮現出一行白色的字。它不大，不閃爍，只是靜靜地存在著，像墓碑上的銘文：<br><br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
+            { text: "在這條死路的盡頭，死人不會再次開口。" },
+            { text: "前進只會迎來永恆的虛無。" },
+            { text: "唯有謹記神明的神諭：逆天改命者，必遭宿命的清算。" },
+            { text: "他既然抹去了起點的弱點，神明便將他的結局化為懲罰。" },
+            { text: "凡人，不要再執迷於前方的虛無。" },
+            { text: "轉過身，讓你的時間倒流。" },
+            { text: "踏上折返的歸途，回到你最初墜落的宴會廳。", isEnd: true } // 精確修改為宴會廳
         ];
 
         let currentIndex = 0; let textAnimationLock = false;
@@ -62,23 +78,25 @@
             if (currentIndex < scriptData.length) {
                 const line = scriptData[currentIndex];
                 textAnimationLock = true;
-                clickHint.style.opacity = "0.05"; // 點擊轉場時微弱化提示
-                storyWrapper.innerHTML = ""; // 清空上一頁，完成「切到下一頁」的乾淨視覺
+                clickHint.style.opacity = "0.05"; // 點擊時提示字微弱化
+                storyWrapper.innerHTML = ""; // 乾淨清空上一行，達成徹底分頁感
 
                 const p = document.createElement("div");
                 p.className = "story-paragraph";
                 p.innerHTML = line.text;
                 storyWrapper.appendChild(p);
 
+                // 微小延遲確保 DOM 渲染後完美觸發 CSS 浮現
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
                 
+                // 鎖定點擊 1.5 秒，強迫玩家必須看完浮現
                 setTimeout(() => { 
                     textAnimationLock = false; 
                     clickHint.style.opacity = "1";
                 }, 1500);
 
-                // 如果走到最後一頁，徹底隱藏提示字，讓世界陷入死寂，等待玩家按上一頁
+                // 如果走到最後一句「回到最初的宴會廳」，徹底隱藏點擊提示，陷入死寂等待上一頁
                 if (line.isEnd) {
                     setTimeout(() => {
                         clickHint.style.display = "none";
@@ -86,6 +104,8 @@
                 }
             }
         }
+        
+        // 首次加載自動播放第一句
         window.onload = showNextParagraph;
     </script>
 </body>
