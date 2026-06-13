@@ -11,18 +11,19 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #050709; color: #dcdcdc; 
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
-            overflow: hidden; /* 徹底鎖死全網頁滾動條 */
-            -webkit-user-select: none; user-select: none;
+            overflow: hidden; -webkit-user-select: none; user-select: none;
         }
         .ambient-hall {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 30%, rgba(223, 183, 108, 0.02) 0%, rgba(5, 7, 9, 0) 80%);
             pointer-events: none; z-index: 10;
         }
+        /* 全螢幕點擊容器 */
         .game-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
         }
+        /* 遊戲舞台留白 */
         .game-stage {
             position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none;
         }
@@ -32,6 +33,7 @@
             transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
         }
         .story-paragraph.visible { opacity: 1; }
+        
         .animated-container {
             width: 100%; max-width: 650px; margin: 15px auto 0 auto; 
             display: none; text-align: center;
@@ -56,7 +58,7 @@
         .menu-button span { display: block; font-size: 9.5pt; color: #6c7279; margin-top: 5px; letter-spacing: 1px; }
         .menu-button:disabled span { color: #24272a; }
 
-        /* 密碼輸入框區塊 */
+        /* 密碼輸入框基礎樣式 */
         .unlock-zone {
             display: none; width: 100%; margin-bottom: 20px; animation: fadeInMenu 1s ease-in-out;
         }
@@ -65,6 +67,7 @@
             padding: 14px; font-size: 12pt; text-align: center; letter-spacing: 4px;
             width: 60%; max-width: 300px; outline: none; transition: border 0.3s;
         }
+        .code-input:focus { border-color: #dfb76c; box-shadow: 0 0 10px rgba(223,183,108,0.2); }
         .submit-btn {
             background-color: #101217; border: 1px solid #343a40; color: #a0a5aa;
             padding: 14px 25px; margin-left: 10px; cursor: pointer; transition: all 0.3s;
@@ -78,6 +81,8 @@
             letter-spacing: 4px; text-shadow: 0 0 15px rgba(179, 47, 47, 0.7);
             line-height: 2; margin: 15px 0;
         }
+        
+        /* 終極詛咒時鐘 23:59:59 */
         .highlight-time-huge {
             color: #94131c; font-size: 45pt; font-weight: bold; text-align: center;
             letter-spacing: 12px; font-family: 'Uncial Antiqua', 'Cinzel Decorative', serif;
@@ -85,8 +90,8 @@
             margin: 20px 0; animation: horrorGlitch 0.12s infinite alternate;
         }
         @keyframes horrorGlitch {
-            0% { transform: translate(0, 0) skewX(0deg); opacity: 0.97; }
-            100% { transform: translate(-0.8px, 0.8px) skewX(-0.5deg); opacity: 0.97; }
+            0% { transform: translate(0, 0) skewX(0deg) scale(1); opacity: 0.97; }
+            100% { transform: translate(-0.8px, 0.8px) skewX(-0.5deg) scale(1); opacity: 0.97; }
         }
         .highlight-gold-line {
             color: #dfb76c; font-weight: bold; text-shadow: 0 0 8px rgba(223, 183, 108, 0.6);
@@ -106,7 +111,6 @@
 
     <div class="game-container" id="gameContainer" onclick="gameContainerClicked()">
         <div class="game-stage">
-            
             <div class="story-wrapper" id="storyWrapper"></div>
 
             <div class="animated-container" id="directionContainer">
@@ -116,11 +120,12 @@
             </div>
 
             <div class="animated-container" id="exploreContainer">
+                
                 <div class="unlock-zone" id="eastUnlockZone" onclick="event.stopPropagation()">
                     <input type="text" class="code-input" id="pastCode" placeholder="過去的命數" autocomplete="off">
                     <button class="submit-btn" onclick="checkPastCode()">解鎖</button>
                 </div>
-                
+
                 <div class="unlock-zone" id="westUnlockZone" onclick="event.stopPropagation()">
                     <input type="text" class="code-input" id="presentCode" placeholder="一見鍾情的魔咒" autocomplete="off">
                     <button class="submit-btn" onclick="checkPresentCode()">解鎖</button>
@@ -141,9 +146,7 @@
                 <button class="menu-button" onclick="handleExplore('mask', event)">重新戴上眼罩</button>
                 <button class="menu-button" onclick="handleExplore('clock', event)">凝視時鐘</button>
             </div>
-
         </div>
-        
         <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
     </div>
 
@@ -153,10 +156,10 @@
             { text: "隔著黑色蕾絲，你剛才「看見」了宴會廳的光芒——金碧輝煌，燭火搖曳，眾神與賓客的輪廓如同剪影。那些影像模糊、顫抖、像浸在水中的油畫，但它們存在。<br>現在，你伸手摘下了眼罩。" },
             { text: "蕾絲從你的皮膚上滑落，像一層薄薄的死皮被揭開。那一刻，你幾乎以為自己會看見某種不該被凡人注視的神聖景象——眩目的、燒灼視網膜的、令你當場化為鹽柱的景象。<br>但什麼都沒有發生。" },
             { text: "<div class='highlight-red-large'>沒有光。沒有聲音。沒有人。</div>" }, 
-            { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴 Sus——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
-            { text: "但舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
-            { text: "這不再死宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
-            { text: "你的呼吸聲變得異常清晰。不是因為安靜——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
+            { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
+            { text: "But舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
+            { text: "這不再是宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
+            { text: "你的呼吸聲變得異常清晰。不是因為安靜 Sus——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
             { text: "你環顧四周。" },
             { text: "宴會廳比你隔著眼罩看到的更大、更高、更深邃。牆壁不是石頭，而是某種黑色的、會吸光的物質。挂毯上的神話刺繡褪色到幾乎看不清，只剩下一些殘留的線條——一個被老鷹啄食的人，一個倒立飛行的少年，一隻睜開的眼睛。" },
             { text: "你轉動身體。視線掠過長桌、掠過空椅、掠過那些凝固的酒杯，最後落在三個方向。", triggerDirectionMenu: true } 
@@ -192,6 +195,7 @@
         let textAnimationLock = false; let isWaitingMenu = false;
         let isReadingDirectionText = false; let isReadingExploreText = false; 
         let clockTimer = null; 
+
         let visitedDirections = { east: false, west: false, north: false };
 
         const storyWrapper = document.getElementById("storyWrapper");
@@ -199,21 +203,22 @@
         const exploreContainer = document.getElementById("exploreContainer");
         const clickHint = document.getElementById("clickHint");
 
-        // 頂層全域偵測：同步檢查東側與西側的折返狀態
-        const hasPastDiscovered = localStorage.getItem("past_puzzles_discovered") === "true";
-        const hasWestSolved = localStorage.getItem("west_puzzle_solved") === "true";
+        // 頂層多重交叉解謎狀態偵測（解決生命週期死鎖）
+        const pastDiscovered = localStorage.getItem("past_puzzles_discovered") === "true";
+        const westSolved = localStorage.getItem("west_puzzle_solved") === "true";
 
-        if (hasPastDiscovered || hasWestSolved) {
+        if (pastDiscovered || westSolved) {
             currentScript = []; currentIndex = 0;
-            isWaitingMenu = true; textAnimationLock = false;
+            isWaitingMenu = true; textAnimationLock = false; // 暴力破鎖
             
             setTimeout(() => {
-                storyWrapper.innerHTML = ""; clickHint.style.display = "none"; exploreContainer.style.display = "block";
+                storyWrapper.innerHTML = ""; clickHint.style.display = "none"; 
+                exploreContainer.style.display = "block";
                 
-                // 如果是東側折返，開啟過去輸入框
-                if (hasPastDiscovered) { document.getElementById("eastUnlockZone").style.display = "block"; }
-                // 如果是西側折返，開啟現在輸入框
-                if (hasWestSolved) { document.getElementById("westUnlockZone").style.display = "block"; }
+                // 如果是從東側（過去之廳）折返
+                if (pastDiscovered) document.getElementById("eastUnlockZone").style.display = "block";
+                // 如果是從西側（現在之廳）折返
+                if (westSolved) document.getElementById("westUnlockZone").style.display = "block";
                 
                 startHorrorClock();
             }, 50);
@@ -231,6 +236,7 @@
         function gameContainerClicked() {
             if (textAnimationLock) return;
             if (isWaitingMenu && !isReadingDirectionText && !isReadingExploreText) return; 
+
             if (isReadingDirectionText) { returnToDirectionMenu(); return; }
             if (isReadingExploreText) { returnToExploreMenu(); return; }
             showNextParagraph();
@@ -293,7 +299,7 @@
             runChaos();
         }
 
-        // 東側解鎖驗證
+        // 東側驗證 (12)
         function checkPastCode() {
             const inputVal = document.getElementById("pastCode").value.trim();
             if (inputVal === "12") {
@@ -308,7 +314,7 @@
             }
         }
 
-        // 西側解鎖驗證
+        // 西側驗證 (LUST)
         function checkPresentCode() {
             const inputVal = document.getElementById("presentCode").value.trim().toUpperCase();
             if (inputVal === "LUST") {
@@ -316,21 +322,18 @@
                 document.getElementById("westUnlockZone").style.display = "none";
                 document.getElementById("explore-west-btn").innerHTML = "前往西側：一見鍾情的魔咒已解";
                 document.getElementById("explore-west-btn").disabled = true;
-                alert("一見鍾情的魔咒已解。");
+                alert("一見鍾情的魔咒已解。你的手背微微一燙，彷彿有看不見的烙印正在癒合。");
             } else {
                 document.getElementById("presentCode").value = "";
-                alert("那不是她給你的咒語（請使用英文輸入）");
+                alert("那不是她給你的咒語。提示：答案為四個字母的英文單字。");
             }
         }
 
-        // 五大選擇路由控制
+        // 最終探索選單按鈕路由
         function handleExplore(action, event) {
             event.stopPropagation(); if (textAnimationLock) return;
             if (action === 'east') { localStorage.setItem("past_puzzles_discovered", "true"); window.location.href = "past1.html"; return; } 
-            
-            // 精確跳轉綁定到西側
-            if (action === 'west') { window.location.href = "present.html"; return; } 
-            
+            if (action === 'west') { window.location.href = "present.html"; return; } // 精確對接到西側入口
             if (action === 'north') { window.location.href = "future1.html"; return; }
 
             textAnimationLock = true; exploreContainer.style.display = "none"; storyWrapper.innerHTML = "";
