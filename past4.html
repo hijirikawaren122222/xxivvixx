@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧭 東側：過去之廳 — 第四間</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #050709; color: #dcdcdc; 
+            font-family: 'Times New Roman', 'Noto Serif TC', serif;
+            overflow: hidden; -webkit-user-select: none; user-select: none;
+        }
+        .ambient-east {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 40%, rgba(179, 86, 86, 0.03) 0%, rgba(5, 7, 9, 0) 75%);
+            pointer-events: none; z-index: 10;
+        }
+        .game-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px 20px; cursor: pointer; z-index: 20;
+        }
+        .game-stage { position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none; }
+        .story-paragraph {
+            font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
+            transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
+        }
+        .story-paragraph.visible { opacity: 1; }
+        .highlight-blood {
+            color: #b32f2f; text-shadow: 0 0 8px rgba(179, 47, 47, 0.5);
+            font-weight: bold; display: block; margin: 15px 0; line-height: 2;
+        }
+        .click-hint {
+            position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
+            font-size: 10pt; color: #3b434a; letter-spacing: 4px; animation: pulse 2.5s infinite; pointer-events: none;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+    <div class="ambient-east"></div>
+    <div class="game-container" onclick="advanceText()">
+        <div class="game-stage"><div id="storyWrapper"></div></div>
+        <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
+    </div>
+
+    <script>
+        const scriptData = [
+            { text: "你改寫了路徑，來到第四間密室。虛空震盪，一道門在你面前浮現。" },
+            { text: "門上刻著一個希臘字母：Δ。你推開它。" },
+            { text: "空氣裡塞滿了焦灼與鐵鏽的氣味。一隻青銅色的老鷹靜止在半空，鳥喙正嵌進一個人的側腹。那個人被鎖鏈捆縛，赤裸的上身佈滿燒傷與撕裂的傷痕——而肝臟正在緩慢地、無法停止地重生。<br>他是普羅米修斯。" },
+            { text: "他無法開口。但他傷口流出的血沒有滴落，而是逆流而上，在牆上凝結成一行古希臘文字：<br><span class='highlight-blood'>「你尋找的是那場嫉妒的初始。火種從這裡墜落，光從這裡被偷走。這間密室藏著第一個聖數——Δέλτα。記住它。」</span>" },
+            { text: "你看著那個字母。血字漸漸褪去。老鷹沒有繼續啄食。一切回到靜止。你沒有東西可以帶走，除了這個名字。", isEnd: true }
+        ];
+
+        let currentIndex = 0; let textAnimationLock = false;
+        const storyWrapper = document.getElementById("storyWrapper");
+        const clickHint = document.getElementById("clickHint");
+
+        function advanceText() {
+            if (textAnimationLock) return;
+            if (currentIndex < scriptData.length) {
+                const line = scriptData[currentIndex];
+                textAnimationLock = true; clickHint.style.opacity = "0.1"; storyWrapper.innerHTML = "";
+                const p = document.createElement("div"); p.className = "story-paragraph"; p.innerHTML = line.text;
+                storyWrapper.appendChild(p);
+                setTimeout(() => { p.classList.add("visible"); }, 50);
+                currentIndex++;
+                setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
+
+                if (line.isEnd) {
+                    setTimeout(() => {
+                        clickHint.innerHTML = "【 第一個聖數已獲取。去尋找另一個密室（past7.html）或返回吧 】";
+                        clickHint.style.color = "#ff7675";
+                    }, 1200);
+                }
+            }
+        }
+        window.onload = advanceText;
+    </script>
+</body>
+</html>
