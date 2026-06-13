@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ</title>
+    <title>Κήρ - 神明的宴會</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -136,7 +136,7 @@
             100% { opacity: 0.3; }
         }
 
-        /* 選擇肢容器 */
+        /* 選擇肢與轉場按鈕容器 - 帶有慢慢浮現動畫 */
         .choice-container {
             position: block;
             max-width: 650px;
@@ -323,13 +323,20 @@
                     clickHint.style.opacity = "1"; 
                 }, 1200);
 
+                // 當走到選擇一的最後一段（紅字結局）
                 if (lineData.isNextPage) {
                     setTimeout(() => {
-                        clickHint.innerHTML = "【 摘下眼罩 】";
-                        // 關鍵修改：將目標換頁檔名更改為 thecloser.html
-                        gameContainer.onclick = function() {
-                            window.location.href = "thecloser.html";
-                        };
+                        isWaitingForChoice = true; // 鎖定常規點擊畫面推進
+                        clickHint.style.display = "none"; // 隱藏原本底部的微弱提示字
+                        
+                        // 讓「摘下眼罩」按鈕以同樣的慢慢浮現動畫登場
+                        choiceContainer.style.display = "none";
+                        choiceContainer.innerHTML = `
+                            <button class="choice-button" style="text-align: center;" onclick="navigateToCloser(event)">
+                                摘下眼罩
+                            </button>
+                        `;
+                        choiceContainer.style.display = "block";
                     }, 1200);
                 }
             } else {
@@ -368,6 +375,12 @@
             showNextParagraph();
         }
 
+        // 獨立處理按鈕跳轉至 thecloser.html
+        function navigateToCloser(event) {
+            event.stopPropagation();
+            window.location.href = "thecloser.html";
+        }
+
         function triggerBadEnd() {
             gameContainer.style.pointerEvents = "none";
             clickHint.style.display = "none";
@@ -392,7 +405,7 @@
             gameContainer.style.pointerEvents = "auto";
             
             gameContainer.onclick = advanceText;
-            clickHint.innerHTML = "【 點擊繼續 】";
+            clickHint.innerHTML = "【 摘下眼罩 】";
             
             titleScreen.style.pointerEvents = "auto"; 
             titleScreen.style.display = "flex";
