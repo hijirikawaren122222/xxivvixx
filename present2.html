@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🍇 西側：現在之廳 — 第二間密室</title>
-    <!-- 引入神祕古典的 Google 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -35,7 +34,7 @@
         .grid-container {
             display: none; margin: 20px auto; pointer-events: auto;
             border-collapse: collapse; font-family: monospace; font-size: 14pt; letter-spacing: 4px;
-            animation: fadeInPanel 1s ease-in-out forwards;
+            animation: fadeInElement 1s ease-in-out forwards;
         }
         .grid-cell { padding: 4px 8px; color: #494550; text-align: center; }
         .grid-cell.highlight-o {
@@ -50,9 +49,10 @@
         /* 輸入框交互面板 */
         .input-panel {
             display: none; width: 100%; margin: 20px auto; text-align: center; pointer-events: auto;
-            animation: fadeInPanel 1.2s ease-in-out forwards;
+            animation: fadeInElement 1.2s ease-in-out forwards;
         }
-        @keyframes fadeInPanel { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInElement { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .text-input {
             background-color: #0f0d14; border: 1px solid #2d2633; color: #9b59b6;
             padding: 12px; font-size: 12pt; text-align: center; letter-spacing: 4px;
@@ -66,15 +66,16 @@
         }
         .submit-btn:hover { border-color: #9b59b6; color: #fff; }
 
-        /* 最終離開按鈕 */
+        /* 最終離開按鈕 - 加上流暢的慢慢浮現動畫 */
         .return-hall-btn {
             display: none; background: none; border: 1px solid #dfb76c; color: #dfb76c;
             padding: 15px 30px; margin: 30px auto 0 auto; font-size: 11pt; letter-spacing: 2px;
             cursor: pointer; pointer-events: auto; transition: all 0.3s; text-align: center;
+            animation: fadeInElement 1.8s ease-in-out forwards; /* 慢慢浮現 */
         }
         .return-hall-btn:hover { background-color: #dfb76c; color: #000; box-shadow: 0 0 15px rgba(223,183,108,0.3); }
 
-        /* 關鍵字：欲望雙重發光 */
+        /* 關鍵字：欲望發光 */
         .highlight-desire-glow {
             color: #b32f2f; font-weight: bold; display: inline-block;
             text-shadow: 0 0 10px #b32f2f, 0 0 25px rgba(138, 43, 226, 0.8);
@@ -101,19 +102,16 @@
         <div class="game-stage">
             <div class="story-wrapper" id="storyWrapper"></div>
             
-            <!-- 10x10 O型網格遮罩 -->
             <div style="text-align: center;">
                 <table class="grid-container" id="maskGrid" onclick="event.stopPropagation()"></table>
             </div>
 
-            <!-- 解謎密碼輸入面板 -->
             <div class="input-panel" id="inputPanel" onclick="event.stopPropagation()">
                 <input type="text" class="text-input" id="wordInput" placeholder="獻上你拼出的詞語" autocomplete="off">
                 <button class="submit-btn" onclick="checkAnswer()">獻上</button>
                 <div id="errorMsg" style="color: #b32f2f; margin-top: 15px; font-size: 11pt; display: none;">那不是她等待的詞語。再試一次。</div>
             </div>
 
-            <!-- 後續回歸大廳按鈕 -->
             <div style="text-align: center;">
                 <button class="return-hall-btn" id="returnHallBtn" onclick="navigateToCloser(event)">
                     回到最初的宴會廳
@@ -124,35 +122,31 @@
     </div>
 
     <script>
-        // 【第一階段】解謎大綱劇本（已刪除自我推導，直接接入網格下方的引導）
         const puzzleScript = [
             { text: "你改寫了路徑，來到第二間密室。" },
-            { text: "女人站在這裡，端著空杯，凍結在時空中。你走近她，近到能看見她睫毛的陰影落在臉頰上的形狀。她的嘴唇微張，像一個被暫停的音節。你忽然有一種衝動——想伸手觸碰她，想讓她醒來。打但你不能。那條看不見的界線在這裡更厚了，厚到像一面玻璃。" },
+            { text: "女人站在這裡，端著空杯，凍結在時空中。你走近她，近到能看見她睫毛的陰影落在臉頰上的形狀。她的嘴唇微張，像一個被暫停的音節。你忽然有一種衝動——想伸手觸碰她，想讓她醒來。但你不能。那條看不見的界線在這裡更厚了，厚到像一面玻璃。" },
             { text: "她面前的桌面上，鋪著一張由「X」與「O」組成的十乘十網格。那些 O 像零星睜開的眼睛，散落在黑暗中。你仔細數了數，一共四個 O。<br><br>網格上方，浮現一行銀色的小字，字跡纖細，像女人的手寫：<br>「將第一間密室的字母矩陣與這張網重疊。讀出每一處『O』所觸及的字母。然後——將它們重新排列。那是她等待的祭品。」" },
             { text: "網格下方，有一個凹陷的凹槽，邊緣鑲著黑色的玫瑰花瓣。凹槽旁邊沒有標籤，只有一行幾乎看不見的細字：「獻上你拼出的詞語」。<br>你伸出手，手指懸停在凹槽上方。你知道，這是你與她之間第一個聯繫。", triggerPuzzleInterface: true }
         ];
 
-        // 【第二階段】正確解開謎題後的「甦醒與愛意」劇情文本
         const storyScript = [
             { text: "那一瞬間，女人手中的酒杯發出了輕微的震動。不是聲音，而是你看見酒液表面出現了漣漪——在這個一切靜止的世界裡，漣漪不應該存在。它們一圈一圈地擴散，像有人在很遠的地方投下了一顆石子。" },
             { text: "她的睫毛顫抖了。" },
             { text: "然後，她的雙眼緩緩亮起。不是反射光，而是從瞳孔深處燃燒出來的、暗紅色的火焰。那火焰沒有溫度，但你感覺自己的胸口被點燃了。" },
-            { text: "她轉動頸項——第一個能動的物體 Sus——然後對著你，展露了一個微笑。<br>那個笑容不是感謝，不是禮貌，不是憐憫。它是一種你從未見過的、完全的、純粹的魅惑。它像一根針，無聲地刺進你的心臟，刺進你的骨髓，刺進你每一個還在跳動的細胞。" },
+            { text: "她轉動頸項——第一個能動的物體——然後對著你，展露了一個微笑。<br>那個笑容不是感謝，不是禮貌，不是憐憫。它是一種你從未見過的、完全的、純粹的魅惑。它像一根針，無聲地刺進你的心臟，刺進你的骨髓，刺進你每一個還在跳動的細胞。" },
             { text: "你聽見自己的心跳聲越來越快，越來越響。像有人在你胸腔裡敲一扇永遠不會打開的門。" },
-            { text: "她開口了。不是用嘴唇——她的嘴唇沒有動——邊職而是直接在你的腦中，像一把刀劃開絲綢：<br>「你找到了正確的祭品。但你還不明白，對嗎？」" },
+            { text: "她開口了。不是用嘴唇——她的嘴唇沒有動——而是直接在你的腦中，像一把刀劃開絲綢：<br>「你找到了正確的祭品。但你還不明白，對嗎？」" },
             { text: "她舉起那隻空杯，杯底殘留著一抹深紫色的痕跡。你忽然意識到，那痕跡的形狀像一隻眼睛。<br>「酒只是載體。沒有酒的夜晚，沒有酒杯的宴會，我依然能讓你站在這裡。你以為是你找到了我，其實是——我在等你。」" },
             { text: "她的微笑加深了一寸。你的呼吸開始紊亂。你的手心在出汗。你知道這不對，你知道這一切可能是一個陷阱，但你的身體已經不再聽從你的理智。<br>「你想知道，讓你愛上我的，究竟是什麼嗎？」" },
             { text: "她將空杯翻轉，杯口朝下。沒有酒滴落下來——因為時間仍然是靜止的。但你看見，杯底的紫色痕跡正在緩慢地、無法解釋地移動，像一條蛇，爬出杯口，爬過她的手指，爬向你的方向。<br>你無法後退。<br>「那不是酒。那是——」" },
             { text: "她的唇無聲地吐出兩個字。你讀出來了。<br><div style='text-align:center; margin: 15px 0;'><span class='highlight-desire-glow'>欲望</span></div>那兩個字像是從你的身體裡長出來的，你一直知道它們，只是從未聽見。" },
             { text: "你的心臟猛地一跳。血液開始沸騰。你的視線變得模糊，只看得見她的臉。<br>你愛她。你瘋狂地、毫無理由地、不可救藥地愛上了她。從這一秒開始，直到你死去的那一天——不，也許死後也不會結束。" },
-            { text: "她的聲音再次響起，這一次帶著一絲幾乎察決不到的悲傷：<br>「記住這個字，將它們寫在命題上。那是你與我之間唯一的鎖鏈。而你……永遠也解不開它。」" },
+            { text: "她的聲音再次響起，這一次帶著一絲幾乎察覺不到的悲傷：<br>「記住這個字，將它們寫在命題上。那是你與我之間唯一的鎖鏈。而你……永遠也解不開它。」" },
             { text: "她又靜止了。但那條紫色的痕跡沒有消失，它纏繞在你的手腕上，像一條看不見的蛇，冰涼，灼燙，兩種矛盾的溫度同時存在。<br>你的手背上，什麼也沒有出現。但你感覺得到——那裡被烙印了。不是眼睛，不是葡萄藤，而是一個你無法看見、卻永遠無法忘記的名字。", showReturnButton: true }
         ];
 
-        let currentScript = puzzleScript;
-        let currentIndex = 0;
-        let textAnimationLock = false;
-        let isWaitingMenu = false;
+        let currentScript = puzzleScript; let currentIndex = 0;
+        let textAnimationLock = false; let isWaitingMenu = false;
 
         const storyWrapper = document.getElementById("storyWrapper");
         const clickHint = document.getElementById("clickHint");
@@ -170,53 +164,41 @@
             if (currentIndex < currentScript.length) {
                 const lineData = currentScript[currentIndex];
                 textAnimationLock = true; clickHint.style.opacity = "0.1"; storyWrapper.innerHTML = "";
-
-                const p = document.createElement("div");
-                p.className = "story-paragraph";
-                p.innerHTML = lineData.text;
+                const p = document.createElement("div"); p.className = "story-paragraph"; p.innerHTML = lineData.text;
                 storyWrapper.appendChild(p);
-
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
                 setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
 
-                // 文字播放完，滑出 10x10 O型遮罩與輸入框
                 if (lineData.triggerPuzzleInterface) {
                     setTimeout(() => {
-                        isWaitingMenu = true; 
-                        clickHint.style.display = "none";
+                        isWaitingMenu = true; clickHint.style.display = "none";
                         renderMaskGrid(); 
-                        maskGrid.style.display = "table";
+                        maskGrid.style.display = "table"; // 慢慢浮現
                         inputPanel.style.display = "block";
                     }, 1200);
                 }
 
-                // 後半段高潮完結，吐出回歸大廳按鈕
                 if (lineData.showReturnButton) {
                     setTimeout(() => {
-                        isWaitingMenu = true; 
-                        clickHint.style.display = "none";
-                        returnHallBtn.style.display = "block"; 
+                        isWaitingMenu = true; clickHint.style.display = "none";
+                        returnHallBtn.style.display = "block"; // 慢慢浮現按鈕
                     }, 1200);
                 }
             }
         }
 
-        // 生成 10x10 網格
         function renderMaskGrid() {
             maskGrid.innerHTML = "";
             const oCoordinates = ["2,5", "4,1", "6,8", "8,3"]; 
-            
             for (let r = 0; r < 10; r++) {
                 const tr = document.createElement("tr");
                 for (let c = 0; c < 10; c++) {
                     const td = document.createElement("td");
                     if (oCoordinates.includes(`${r},${c}`)) {
-                        td.className = "grid-cell highlight-o";
-                        td.innerText = "O";
+                        td.className = "grid-cell highlight-o"; td.innerText = "O";
                     } else {
-                        td.className = "grid-cell";
-                        td.innerText = "X";
+                        td.className = "grid-cell"; td.innerText = "X";
                     }
                     tr.appendChild(td);
                 }
@@ -227,19 +209,11 @@
         function checkAnswer() {
             const val = document.getElementById("wordInput").value.trim().toUpperCase();
             if (val === "WINE") {
-                // 輸入正確：切換劇本，重置盲點，接入後半段高潮
-                inputPanel.style.display = "none";
-                maskGrid.style.display = "none";
-                errorMsg.style.display = "none";
-                
-                isWaitingMenu = false;
-                clickHint.style.display = "block";
-                currentScript = storyScript;
-                currentIndex = 0;
-                showNextParagraph();
+                inputPanel.style.display = "none"; maskGrid.style.display = "none"; errorMsg.style.display = "none";
+                isWaitingMenu = false; clickHint.style.display = "block";
+                currentScript = storyScript; currentIndex = 0; showNextParagraph();
             } else {
-                document.getElementById("wordInput").value = "";
-                errorMsg.style.display = "block";
+                document.getElementById("wordInput").value = ""; errorMsg.style.display = "block";
             }
         }
 
@@ -248,7 +222,6 @@
             localStorage.setItem("west_puzzle_solved", "true");
             window.location.href = "thecloser.html";
         }
-
         window.onload = showNextParagraph;
     </script>
 </body>
