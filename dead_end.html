@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑暗的虛無</title>
+    <title>虛無</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000000; color: #ffffff; /* 絕對純黑虛無 */
+            background-color: #000000; color: #ffffff; 
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
             overflow: hidden; -webkit-user-select: none; user-select: none;
         }
-        /* 全螢幕盲點推進容器 */
         .game-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
@@ -20,16 +19,25 @@
         .game-stage { 
             position: block; max-width: 700px; margin: 160px auto 0 auto; pointer-events: none; 
         }
-        
-        /* 核心轉場設計：文字浮現動畫與陰影 */
         .story-paragraph {
             font-size: 13pt; line-height: 2; letter-spacing: 2px; opacity: 0;
-            transition: opacity 1.8s ease-in-out; /* 調整為更緩慢地優雅浮現 */
+            transition: opacity 1.8s ease-in-out;
             text-shadow: 0 0 8px rgba(255,255,255,0.3);
             text-align: center;
         }
         .story-paragraph.visible { opacity: 1; }
         
+        /* 隱秘的折返藍色冷火發光特效 */
+        .highlight-return-glow {
+            color: #4a90e2; font-weight: bold; display: inline-block;
+            text-shadow: 0 0 8px rgba(74, 144, 226, 0.8), 0 0 20px rgba(74, 144, 226, 0.4);
+            animation: returnPulse 2.5s infinite alternate;
+        }
+        @keyframes returnPulse {
+            0% { text-shadow: 0 0 6px rgba(74, 144, 226, 0.6); }
+            100% { text-shadow: 0 0 14px rgba(74, 144, 226, 1), 0 0 25px rgba(74, 144, 226, 0.5); }
+        }
+
         .click-hint {
             position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
             font-size: 10pt; color: #222; letter-spacing: 4px; animation: pulse 3s infinite; pointer-events: none;
@@ -47,7 +55,6 @@
     </div>
 
     <script>
-        // 將所有空白行與段落，精確拆解成獨立點擊的網頁 Page 劇本
         const scriptData = [
             { text: "你踏入冰界的瞬間，世界碎裂了。" },
             { text: "不是轟然崩塌，而是像一面鏡子從邊緣開始剝落，每一片碎片都映出不同的你——你站在暴雨中的你、你打開邀請函的你、你摘下眼罩的你。" },
@@ -55,14 +62,14 @@
             { text: "然後，什麼都沒有了。" },
             { text: "沒有光，沒有聲音，沒有溫度。沒有牆，沒有地板，沒有冥河，沒有阿基里斯。" },
             { text: "你甚至不確定自己還有沒有身體。" },
-            { text: "黑暗中，浮現出一行白色的字。它不大，不閃爍，只是靜靜地存在著，像墓碑上的銘文：<br><br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
+            { text: "黑暗中，浮現出一行白色的字，只是靜靜地存在著，像墓碑上的銘文：<br><br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
             { text: "在這條死路的盡頭，死人不會再次開口。" },
             { text: "前進只會迎來永恆的虛無。" },
             { text: "唯有謹記神明的神諭：逆天改命者，必遭宿命的清算。" },
             { text: "他既然抹去了起點的弱點，神明便將他的結局化為懲罰。" },
             { text: "凡人，不要再執迷於前方的虛無。" },
             { text: "轉過身，讓你的時間倒流。" },
-            { text: "踏上折返的歸途，回到你最初墜落的宴會廳。", isEnd: true } // 精確修改為宴會廳
+            { text: "踏上<span class='highlight-return-glow'>折返</span>的歸途，回到你最初墜落的偏廳。", isEnd: true } // 精確修改為偏廳，折返發光
         ];
 
         let currentIndex = 0; let textAnimationLock = false;
@@ -78,34 +85,27 @@
             if (currentIndex < scriptData.length) {
                 const line = scriptData[currentIndex];
                 textAnimationLock = true;
-                clickHint.style.opacity = "0.05"; // 點擊時提示字微弱化
-                storyWrapper.innerHTML = ""; // 乾淨清空上一行，達成徹底分頁感
+                clickHint.style.opacity = "0.05";
+                storyWrapper.innerHTML = "";
 
                 const p = document.createElement("div");
                 p.className = "story-paragraph";
                 p.innerHTML = line.text;
                 storyWrapper.appendChild(p);
 
-                // 微小延遲確保 DOM 渲染後完美觸發 CSS 浮現
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
                 
-                // 鎖定點擊 1.5 秒，強迫玩家必須看完浮現
                 setTimeout(() => { 
                     textAnimationLock = false; 
                     clickHint.style.opacity = "1";
                 }, 1500);
 
-                // 如果走到最後一句「回到最初的宴會廳」，徹底隱藏點擊提示，陷入死寂等待上一頁
                 if (line.isEnd) {
-                    setTimeout(() => {
-                        clickHint.style.display = "none";
-                    }, 1500);
+                    setTimeout(() => { clickHint.style.display = "none"; }, 1500);
                 }
             }
         }
-        
-        // 首次加載自動播放第一句
         window.onload = showNextParagraph;
     </script>
 </body>
