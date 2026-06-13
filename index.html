@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ</title>
+    <title>Κήρ - 神明的宴會</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -104,6 +104,18 @@
         .highlight-gold { color: #dfb76c; text-shadow: 0 0 5px rgba(223, 183, 108, 0.5); }
         .highlight-greek { font-style: italic; color: #a0aab5; border-bottom: 1px dashed #a0aab5; }
 
+        /* 最後轉場行：血紅色強調大字 */
+        .highlight-red-large {
+            color: #b32f2f;
+            font-size: 15pt;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 35px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(179, 47, 47, 0.6);
+            line-height: 2;
+        }
+
         /* 點擊提示 */
         .click-hint {
             position: absolute;
@@ -124,13 +136,19 @@
             100% { opacity: 0.3; }
         }
 
-        /* 選擇肢 */
+        /* 選擇肢容器 - 加上漸進浮現動畫 */
         .choice-container {
             position: block;
             max-width: 650px;
             margin: 40px auto 0 auto;
             display: none; 
             text-align: center;
+            animation: fadeInChoice 1.8s ease-in-out forwards;
+        }
+
+        @keyframes fadeInChoice {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .choice-button {
@@ -205,7 +223,6 @@
 </head>
 <body>
 
-    <!-- 初始大字標題畫面 -->
     <div class="title-screen" id="titleScreen" onclick="startGame()">
         <div class="title-large">Κήρ</div>
         <div class="title-sub">（ 點擊開始故事 ）</div>
@@ -219,7 +236,6 @@
         <div class="click-hint" id="clickHint" style="display:none;">【 點擊繼續 】</div>
     </div>
 
-    <!-- 結局全黑轉場層 -->
     <div class="fade-overlay" id="fadeOverlay">
         <div class="game-over-text" id="gameOverText">
             命運從不遺忘。<br>
@@ -231,14 +247,14 @@
         const scriptData = {
             intro: [
                 { text: "雨不是從天空落下，而是從地底、牆縫、你的骨頭縫隙裡滲出來。<br>你已經在這條石板路上走了很久，久到分不清自己是醒著還是在做夢。每一次呼吸，肺裡都像灌進了<span class='highlight-green'>黑色的水銀</span>。<br>路燈是死去的月亮。它們發出的光不是黃色，而是<span class='highlight-green'>硫磺般的青綠</span>，把整條街照得像一座沉沒的祭壇。<br>你的衣服濕透了，貼在皮膚上，像第二層正在腐爛的皮。" },
-                { text: "然後——你看見他了。<br>一個身影從雨幕中走出來，不是走，更像是雨水把他凝結成人形。他很高，高到不應該存在於人間。他沒有五官，臉上只有一片光滑的黑暗，但你感覺得到他在看你。<br>他伸出手。<br>那隻手穿過你的胸膛，沒有痛，只有一種被掏空的感覺。當他抽回手時，你低頭——自己毫髮傷，但掌心多了一樣東西。<br>不是一樣。是兩樣。" },
+                { text: "然後——你看見他了。<br>一個身影從雨幕中走出來，不是走，更像是雨水把他凝結成人形。He很高，高到不應該存在於人間。他沒有五官，臉上只有一片光滑的黑暗，但你感覺得到他在看你。<br>他伸出手。<br>那隻手穿過你的胸膛，沒有痛，只有一種被掏空的感覺。當他抽回手時，你低頭——自己毫髮傷，但掌心多了一樣東西。<br>不是一樣。是兩樣。" },
                 { text: "第一樣你認得：一封黑色的信函。火漆上壓著一隻睜開的眼睛，瞳孔深處有<span class='highlight-gold'>金色的火焰</span>在燃燒。那是邀請函，邀請你參加一場「神明的宴會」。<br>第二樣你從未見過：一個<span class='highlight-gold'>黑色蕾絲眼罩</span>。它輕得像霧，摸起來卻有冰涼的觸感，彷彿剛從某個死去的人的臉上取下來。眼罩的內側，用銀線繡著一行極小的古希臘文——你勉強辨認出幾個字：<br><span class='highlight-greek'>「閉上凡人的眼，才能看見神的真實。」</span>" },
                 { text: "那個人形的雨水已經消失了。只剩下你和這兩樣東西，站在暴雨中央。<br>不遠處，一棟建築從黑暗中浮現。它原本並不在那裡——或者它一直在，只是你的肉眼看不見。大門微啟，裡面透出溫暖卻詭異的<span class='highlight-gold'>金光</span>，像一隻半睜的獸瞳。<br>雨水落在眼罩上，沒有濡濕，反而像被吞噬了。" },
                 { text: "你知道，這是一個選擇。或許是這輩子唯一真正自由的選擇。" }
             ],
             choice1: [
                 { text: "你猶豫了很久。雨水在你的腳邊匯成淺淺的水窪，倒映著那扇發光的門。<br>終於，你舉起那隻眼罩。蕾絲貼上你的皮膚，冰涼，像死者的親吻。你把絲帶繞過後腦，繫緊。<br>黑暗降臨。不是普通的黑暗——是一種有重量的黑暗，壓在你的眼皮上，壓在你的聽覺上，壓在你的靈魂上。<br>你閉上眼。<br>然後，你聽見門在自己面前敞開的聲音。不是吱呀作響，而是像水面破開一個洞，所有的聲音都被吸進那個洞裡。<br>你跨出一步。" },
-                { text: "——沒有踩到地板。你踩到了虛空。<br>但虛空接住了你。<br>當你再次睜開眼時，你已經站在一座巨大宴會廳的正中央。<br>你沒有經過大門。你甚至不確定自己是不是還活著。<br>但你聞到了酒香、花香、以及某種時間靜止之後才會產生的、像舊書頁一樣的氣味。<br>宴會開始了。或者說，它從未開始，也從未結束。", isNextPage: true }
+                { text: "——沒有踩到地板。你踩到了虛空。<br>但虛空接住了你。<br>當你再次睜開眼時，你已經站在一座巨大宴會廳的正中央。<br>你沒有經過大門。你甚至不確定自己是不是還活著。<br>但你聞到了酒香、花香、以及某種時間靜止之後才會產生的、像舊書頁一樣的氣味。<br><div class='highlight-red-large'>宴會開始了。或者說，它從未開始，也從未結束。</div>", isNextPage: true }
             ],
             choice2: [
                 { text: "你的手指一鬆。<br>邀請函和眼罩同時掉進地面的水窪裡。它們沒有沉下去，而是浮在水面上，像兩隻死去的蝴蝶。<br>你轉身就跑。<br>雨水像是突然有了生命，它們纏住你的腳踝，試圖把你拉回來。你踢開它們，拚命奔跑。那座建築的光芒在身後迅速縮小，變成一個針尖大的金色斑點。<br>然後，消失了。" },
@@ -297,7 +313,7 @@
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
 
-                // 走到路線一結尾時，變更提示為「摘下眼罩」
+                // 走到路線一紅字終點，更改提示為「摘下眼罩」並跳轉
                 if (lineData.isNextPage) {
                     clickHint.innerHTML = "【 摘下眼罩 】";
                     gameContainer.onclick = function() {
@@ -315,6 +331,8 @@
             isWaitingForChoice = true;
             clickHint.style.display = "none";
             
+            // 強制重設容器 display 觸發 CSS 淡入動畫
+            choiceContainer.style.display = "none";
             choiceContainer.innerHTML = `
                 <button class="choice-button" onclick="selectRoute('choice1', event)">
                     【選擇一：掩上黑色蕾絲眼罩，閉上雙眼，走入宴會】
@@ -370,5 +388,4 @@
         }
     </script>
 </body>
-</html>
 </html>
