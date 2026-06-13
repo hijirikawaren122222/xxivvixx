@@ -160,7 +160,7 @@
                 <!-- 終極結局按鈕觸發區 -->
                 <div class="climax-action-wrapper" id="climaxActionZone" onclick="event.stopPropagation()">
                     <button class="grand-final-btn" onclick="triggerGrandFinale()">
-                        拨動指針至 12:00
+                        撥動指針至 12:00
                     </button>
                 </div>
                 
@@ -275,15 +275,15 @@
 
         function updateButtonsDisplay() {
             if (localStorage.getItem("past_solved") === "true") {
-                document.getElementById("explore-east-btn").innerHTML = "前往東側：過去的命數已解";
+                document.getElementById("explore-east-btn").innerHTML = "過去的命數已解";
                 document.getElementById("explore-east-btn").disabled = true;
             }
             if (localStorage.getItem("west_solved") === "true") {
-                document.getElementById("explore-west-btn").innerHTML = "前往西側：一見鍾情的魔咒已解";
+                document.getElementById("explore-west-btn").innerHTML = "一見鍾情的魔咒已解";
                 document.getElementById("explore-west-btn").disabled = true;
             }
             if (localStorage.getItem("north_solved") === "true") {
-                document.getElementById("explore-north-btn").innerHTML = "前往北側：未來的宿命已解";
+                document.getElementById("explore-north-btn").innerHTML = "未來的宿命已解";
                 document.getElementById("explore-north-btn").disabled = true;
             }
         }
