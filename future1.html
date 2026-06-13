@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌌 北側：未來之廳 — 冰霜之門</title>
+    <title>🌌 北側：未來之廳 — 逆轉的星盤</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -22,7 +22,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
         }
-        .game-stage { position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none; }
+        .game-stage { position: block; max-width: 700px; margin: 80px auto 0 auto; pointer-events: none; }
         .story-wrapper { width: 100%; margin-bottom: 25px; }
         .story-paragraph {
             font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
@@ -30,11 +30,22 @@
         }
         .story-paragraph.visible { opacity: 1; }
 
+        .highlight-last-house {
+            color: #4a90e2; font-weight: bold;
+            text-shadow: 0 0 8px rgba(74, 144, 226, 0.8), 0 0 20px rgba(74, 144, 226, 0.4);
+            animation: pulseGlowBlue 2.5s infinite alternate; display: inline-block;
+        }
+        @keyframes pulseGlowBlue {
+            0% { text-shadow: 0 0 6px rgba(74, 144, 226, 0.6); opacity: 0.9; }
+            100% { text-shadow: 0 0 14px rgba(74, 144, 226, 1), 0 0 25px rgba(74, 144, 226, 0.6); opacity: 1; }
+        }
+
+        /* 邁向死路按鈕 */
         .action-container {
             display: none; width: 100%; max-width: 650px; margin: 15px auto 0 auto;
-            text-align: center; animation: fadeInMenu 1.5s ease-in-out forwards; pointer-events: auto;
+            text-align: center; animation: fadeInElement 1.5s ease-in-out forwards; pointer-events: auto;
         }
-        @keyframes fadeInMenu { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInElement { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
         .menu-button {
             display: block; width: 100%; background-color: rgba(10, 15, 20, 0.85);
@@ -47,24 +58,64 @@
             background-color: rgba(74, 144, 226, 0.03); box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
         }
 
-        .zodiac-grid {
-            display: none; grid-template-columns: repeat(3, 1fr); gap: 12px;
-            max-width: 600px; margin: 20px auto; pointer-events: auto;
-            animation: fadeInMenu 1.5s ease-in-out forwards;
+        /* 3D 命運星盤畫布核心外觀 */
+        .astrolabe-wrapper {
+            display: none; width: 120%; max-width: 360px; height: 360px; margin: 30px auto;
+            position: relative; pointer-events: auto; text-align: center;
+            animation: fadeInElement 1.8s ease-in-out forwards;
         }
-        .zodiac-btn {
-            background-color: rgba(5, 8, 12, 0.9); border: 1px solid #1a2530;
-            padding: 14px; color: #8fa1b3; font-size: 11pt; letter-spacing: 2px;
-            cursor: pointer; transition: all 0.3s; font-family: 'Noto Serif TC', serif;
+        .astrolabe-disk {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle, #09131a 0%, #050a0f 70%, #101920 100%);
+            border: 4px double #1a303d; position: relative; cursor: grab;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(74,144,226,0.05);
+            transform: perspective(600px) rotateX(15deg); transition: box-shadow 0.3s;
         }
-        .zodiac-btn:hover {
-            border-color: #4a90e2; color: #fff; text-shadow: 0 0 8px #4a90e2;
-            background-color: rgba(74, 144, 226, 0.02);
+        .astrolabe-disk:active { cursor: grabbing; }
+        
+        /* 星盤內圈刻紋線 */
+        .astrolabe-inner-ring {
+            position: absolute; top: 12%; left: 12%; width: 76%; height: 12%; border-radius: 50%;
+            border: 1px dashed rgba(74, 144, 226, 0.15); pointer-events: none;
         }
 
+        /* 打亂順序的黃道占星符號 */
+        .zodiac-node {
+            position: absolute; width: 34px; height: 34px; line-height: 34px;
+            text-align: center; font-size: 16pt; color: #526875; font-family: 'Times New Roman', serif;
+            transform: translate(-50%, -50%); transition: all 0.3s ease; pointer-events: auto;
+        }
+        .zodiac-node:hover {
+            color: #4a90e2; text-shadow: 0 0 10px #4a90e2; font-size: 18pt;
+        }
+        /* 懸停符號顯示的極簡浮動文字提示 */
+        .zodiac-node::after {
+            content: attr(data-hint); position: absolute; bottom: -20px; left: 50%;
+            transform: translateX(-50%); font-size: 8pt; color: #3a4b57;
+            opacity: 0; transition: opacity 0.3s; white-space: nowrap; font-family: 'Noto Serif TC', serif;
+            letter-spacing: 0; pointer-events: none;
+        }
+        .zodiac-node:hover::after { opacity: 1; color: #4a90e2; }
+
+        /* 散發著深藍色冷火的3D旋轉指針 */
+        .astrolabe-pointer {
+            position: absolute; top: 50%; left: 50%; width: 6px; height: 145px;
+            background: linear-gradient(to top, rgba(74,144,226,0) 0%, rgba(74,144,226,0.8) 70%, #ffffff 100%);
+            transform-origin: 50% 100%; transform: translate(-50%, -100%) rotate(0deg);
+            pointer-events: none; border-radius: 3px;
+            box-shadow: 0 0 12px #4a90e2, 0 0 25px rgba(74,144,226,0.4);
+        }
+        /* 指針中心青銅軸心 */
+        .astrolabe-center {
+            position: absolute; top: 50%; left: 50%; width: 16px; height: 16px;
+            background-color: #1a303d; border: 2px solid #4a90e2; border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; box-shadow: 0 0 8px rgba(0,0,0,0.8);
+        }
+
+        /* 最終命運卡牌區 */
         .fool-card-zone {
             display: none; text-align: center; margin-top: 25px; pointer-events: auto;
-            animation: fadeInMenu 1.8s ease-in-out forwards;
+            animation: fadeInElement 1.8s ease-in-out forwards;
         }
         .tarot-title {
             font-family: 'Uncial Antiqua', 'Cinzel Decorative', serif;
@@ -77,7 +128,6 @@
             100% { text-shadow: 0 0 10px #000, 0 0 40px rgba(74, 144, 226, 0.8); }
         }
         .tarot-hint { font-size: 10.5pt; color: #6c7279; letter-spacing: 1px; margin-bottom: 25px; }
-
         .return-btn {
             background: none; border: 1px solid #dfb76c; color: #dfb76c;
             padding: 14px 30px; font-size: 11pt; letter-spacing: 2px; cursor: pointer; transition: all 0.3s;
@@ -105,19 +155,24 @@
                 </button>
             </div>
 
-            <div class="zodiac-grid" id="zodiacGrid" onclick="event.stopPropagation()">
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">白羊座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">金牛座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">雙子座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">巨蟹座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">獅子座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">處女座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">天秤座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">天蠍座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">射手座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">摩羯座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(false)">水瓶座</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(true)">雙魚座</button>
+            <div class="astrolabe-wrapper" id="astrolabeZone">
+                <div class="astrolabe-disk" id="astrolabeDisk" onmousedown="startDrag(event)" onmousemove="doDrag(event)" onmouseup="endDrag()" onmouseleave="endDrag()" ontouchstart="startDrag(event)" ontouchmove="doDrag(event)" ontouchend="endDrag()">
+                    <div class="astrolabe-inner-ring"></div>
+                    <div class="zodiac-node" style="top:15%; left:50%;" data-angle="0" data-hint="天蠍座">♏</div>
+                    <div class="zodiac-node" style="top:23%; left:75%;" data-angle="30" data-hint="雙子座">♊</div>
+                    <div class="zodiac-node" style="top:41%; left:90%;" data-angle="60" data-hint="獅子座">♌</div>
+                    <div class="zodiac-node" style="top:65%; left:88%;" data-angle="90" data-hint="白羊座"> Aries ♈</div>
+                    <div class="zodiac-node" style="top:83%; left:71%;" data-angle="120" data-hint="摩羯座">♑</div>
+                    <div class="zodiac-node" style="top:91%; left:46%;" data-angle="150" data-hint="巨蟹座"> Cancer ♋</div>
+                    <div class="zodiac-node" style="top:81%; left:22%;" data-angle="180" data-hint="雙魚座">♓</div> <div class="zodiac-node" style="top:61%; left:11%;" data-angle="210" data-hint="天秤座"> Libra ♎</div>
+                    <div class="zodiac-node" style="top:38%; left:12%;" data-angle="240" data-hint="金牛座"> Taurus ♉</div>
+                    <div class="zodiac-node" style="top:19%; left:26%;" data-angle="270" data-hint="水瓶座"> Aquarius ♒</div>
+                    <div class="zodiac-node" style="top:10%; left:50%;" data-angle="300" data-hint="射手座"> Sagittarius ♐</div>
+                    <div class="zodiac-node" style="top:20%; left:76%;" data-angle="330" data-hint="處女座"> Virgo ♍</div>
+                    
+                    <div class="astrolabe-pointer" id="astrolabePointer"></div>
+                    <div class="astrolabe-center"></div>
+                </div>
             </div>
 
             <div class="fool-card-zone" id="foolCardZone" onclick="event.stopPropagation()">
@@ -138,22 +193,22 @@
             { text: "你跨過門檻，走入了宴會廳最深的死角。" },
             { text: "這裡比任何地方都更冷。冷到你的每一次呼吸都凝結成細小的白色霧團，懸浮在空氣中，久久不散。牆壁不是石頭，而是黑色的、會吸光的物質，像凝固的深淵。沒有燭火，沒有吊燈，唯一的光源來自地面——那裡有一條黑色的河流，靜止不動，卻在你的注視下微微顫動。" },
             { text: "冥河。你沒有見過它，但你的身體認識它。你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。<br><br>阿基里斯就站在河的正中央。" },
-            { text: "他像一尊戰神雕像，按劍而立，右手纏著繃帶，腳踝處裸露的皮膚在黑暗中散發著微弱的金色光芒。他的雙眼睜開，凝視著不存在的遠方，瞳孔裡沒有倒影。冥河的水汽在他腳下擴散，形成了一道無法逾越的冰界——那不是牆，而一種「你不能靠近」的法則，刻在你的骨頭裡，像與生俱來的恐懼。" },
-            { text: "他的身體沒有任何傷痕。沒有任何弱點。你知道那個神話——他連腳踝都浸入了冥河。在這個時空裡，他是一隻沒有致命處的怪物，一個打破了宿命的半神。<br><br>在他面前，虛空中懸浮著一座巨大的青銅星盤。星盤的邊緣刻著十二個星座符號，但它們沒有發光，沒有運轉。星盤的中央是一根指針，指向……什麼都沒有。指針懸空，猶豫不決，像一個站在懸崖邊緣的人。" },
+            { text: "他像一尊戰神雕像，按劍而立，右手纏著繃帶，腳踝處裸露的皮膚在黑暗中散發著微弱的金色光芒。他的雙眼睜開，凝視著不存在的遠方，瞳孔裡沒有倒影。冥河的水汽在他腳下擴散，形成了一道無法逾越的冰界——那不是牆，而是一種「你不能靠近」的法則，刻在你的骨頭裡，像與生來的恐懼。" },
+            { text: "他的身體沒有任何傷痕。沒有任何弱點。你知道那個神話——他連腳踝都浸入了冥河。在這個時空裡，他是一隻沒有致命處的怪物，一個打破了宿命的半神。<br><br>在你面前，虛空中懸浮著一座巨大的青銅星盤。星盤的邊緣刻著十二個星座符號，但它們沒有發光，沒有運轉。星盤的中央是一根指針，指向……什麼都沒有。指針懸空，猶豫不決，像一個站在懸崖邊緣的人。" },
             { text: "結界邊緣的牆上，浮現著一行幾乎被磨滅的文字。字跡不是刻上去的，而是像被水漬浸出來的，模糊、顫抖，像將死之人最後的呼吸：<br>「半神之軀，其命運始於雙子，困於巨蟹。貪戀不死的英雄，將致命的腳踝也交給了冥河。他抹去了一切弱點，成為無法戰勝的怪物，妄圖以此違抗黃道的終點。」" },
             { text: "你讀完最後一個字，那行文字忽然開始流血。紅色的液體從牆上滲出來，匯聚成新的句子：<br>「凡人，前方已是死路。想要破除不死的威壓，你必須先親自步入他那沒有弱點的絕望未來……然後，尋找折返的步伐。」", triggerActionBtn: true }
         ];
 
+        // 3D 倒流分段劇本
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
-            { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。" },
-            { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」" },
-            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的最後一宮。那是神明降下的懲罰。」", triggerZodiacGrid: true }
+            { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。<br><br>空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」" },
+            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」", triggerAstrolabe: true }
         ];
 
         const winScript = [
-            { text: "你將指針撥向雙魚座。星盤發出一聲低沉的轟鳴，像古老的齒輪咬合。十二個符號同時熄滅，只剩雙魚座的那一對魚型圖騰，燒成熾熱的白色。" },
+            { text: "星盤發出一聲低沉的轟鳴，像古老的齒輪咬合。十二個符號同時熄滅，只剩雙魚座的那一對魚型圖騰，燒成熾熱的白色。" },
             { text: "阿基里斯的雕像從腳踝開始碎裂。裂痕向上蔓延，穿過膝蓋、腰腹、胸膛，直到他的臉。他沒有發出聲音——雕像不應該發出聲音——但你聽見了某種遙遠的、像風穿過廢墟的哀鳴。" },
             { text: "冥河的黑水完全倒流，縮回虛空中。冰界碎裂，化為一地黑色的碎屑，像燒過的紙灰。" },
             { text: "在黑曜石桌的廢墟中，滾出一樣東西。那是一張塔羅牌，邊緣燒焦，牌面上畫著一個穿著華服的旅人，正踏向懸崖的邊緣。他的腳下是深淵，但他沒有低頭。他的身後有一隻白色的小狗在吠叫，但他沒有回頭。", triggerFoolCard: true }
@@ -161,26 +216,24 @@
 
         let currentScript = initScript; let currentIndex = 0;
         let textAnimationLock = false; let isWaitingMenu = false;
+        
+        // 3D 拖曳物理引擎變數
+        let isDragging = false;
+        let currentAngle = 0;
+        let puzzleSolved = false;
 
         const storyWrapper = document.getElementById("storyWrapper");
         const clickHint = document.getElementById("clickHint");
         const initActionZone = document.getElementById("initActionZone");
-        const zodiacGrid = document.getElementById("zodiacGrid");
+        const astrolabeZone = document.getElementById("astrolabeZone");
+        const astrolabeDisk = document.getElementById("astrolabeDisk");
+        const astrolabePointer = document.getElementById("astrolabePointer");
         const foolCardZone = document.getElementById("foolCardZone");
 
-        // 【終極修復】全面改用 pageshow 事件，徹底破除瀏覽器 Page Cache 網頁快照鎖死
         window.addEventListener('pageshow', function(event) {
-            // 初始化控制變數，防止狀態殘留
-            storyWrapper.innerHTML = "";
-            initActionZone.style.display = "none";
-            zodiacGrid.style.display = "none";
-            foolCardZone.style.display = "none";
-            clickHint.style.display = "block";
-            isWaitingMenu = false;
-            textAnimationLock = false;
-            currentIndex = 0;
+            storyWrapper.innerHTML = ""; initActionZone.style.display = "none"; astrolabeZone.style.display = "none"; foolCardZone.style.display = "none";
+            clickHint.style.display = "block"; isWaitingMenu = false; textAnimationLock = false; currentIndex = 0;
 
-            // 只要死路標記被觸發（無論是正常換網址還是上一頁折返）
             if (localStorage.getItem("future_dead_end_reached") === "true") {
                 localStorage.removeItem("future_dead_end_reached");
                 currentScript = timeReverseScript;
@@ -208,8 +261,8 @@
                 if (lineData.triggerActionBtn) {
                     setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; initActionZone.style.display = "block"; }, 1200);
                 }
-                if (lineData.triggerZodiacGrid) {
-                    setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; zodiacGrid.style.display = "grid"; }, 1200);
+                if (lineData.triggerAstrolabe) {
+                    setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; astrolabeZone.style.display = "block"; }, 1200);
                 }
                 if (lineData.triggerFoolCard) {
                     setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; foolCardZone.style.display = "block"; }, 1200);
@@ -217,21 +270,68 @@
             }
         }
 
+        /* ─── 3D 實時拖曳指針演算法 ─── */
+        function startDrag(e) {
+            if (puzzleSolved) return;
+            isDragging = true;
+            calculateAngle(e);
+        }
+
+        function doDrag(e) {
+            if (!isDragging || puzzleSolved) return;
+            calculateAngle(e);
+        }
+
+        function endDrag() {
+            if (!isDragging || puzzleSolved) return;
+            isDragging = false;
+            
+            // 核心解謎檢查：雙魚座在 180 度（正下方位置），給予前後 12 度的寬容判定區
+            if (currentAngle >= 168 && currentAngle <= 192) {
+                puzzleSolved = true;
+                currentAngle = 180; // 強制完美吸附吸合
+                astrolabePointer.style.transform = `translate(-50%, -100%) rotate(${currentAngle}deg)`;
+                astrolabeDisk.style.boxShadow = "0 0 40px #4a90e2, inset 0 0 30px rgba(74,144,226,0.3)";
+                
+                // 播放金屬齒輪咬合死鎖動畫
+                setTimeout(() => {
+                    astrolabeZone.style.display = "none";
+                    isWaitingMenu = false;
+                    clickHint.style.display = "block";
+                    currentScript = winScript;
+                    currentIndex = 0;
+                    showNextParagraph();
+                }, 1000);
+            }
+        }
+
+        function calculateAngle(e) {
+            const rect = astrolabeDisk.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // 兼容手機端觸控與滑鼠事件
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const deltaX = clientX - centerX;
+            const deltaY = clientY - centerY;
+            
+            // 計算相對於正上方(0度)的夾角
+            let angle = Math.atan2(deltaX, -deltaY) * (180 / Math.PI);
+            if (angle < 0) angle += 360;
+            
+            currentAngle = Math.round(angle);
+            
+            // 動態驅動 3D 指針與星盤微小的傾斜折射光感
+            astrolabePointer.style.transform = `translate(-50%, -100%) rotate(${currentAngle}deg)`;
+            astrolabeDisk.style.transform = `perspective(600px) rotateX(15deg) rotateY(${(deltaX / rect.width) * 10}deg)`;
+        }
+
         function goToDeadEnd(event) {
             event.stopPropagation();
             localStorage.setItem("future_dead_end_reached", "true");
             window.location.href = "dead_end.html";
-        }
-
-        function chooseZodiac(isCorrect) {
-            if (isCorrect) {
-                zodiacGrid.style.display = "none"; isWaitingMenu = false; clickHint.style.display = "block";
-                currentScript = winScript; currentIndex = 0;
-                showNextParagraph();
-            } else {
-                alert("星盤指針猛地反轉，一道寒氣將你凍結在原地。錯誤的選擇。阿基里斯的威壓沒有減弱，反而更重。你無法動彈，只能永遠站在這裡，成為他的陪葬。");
-                window.location.reload();
-            }
         }
 
         function returnToCloser() {
