@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ</title>
+    <title>Κήρ - 神明的宴會</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -223,7 +223,6 @@
 </head>
 <body>
 
-    <!-- 初始大字標題畫面 -->
     <div class="title-screen" id="titleScreen" onclick="startGame()">
         <div class="title-large">Κήρ</div>
         <div class="title-sub">（ 點擊開始故事 ）</div>
@@ -237,7 +236,6 @@
         <div class="click-hint" id="clickHint" style="display:none;">【 點擊繼續 】</div>
     </div>
 
-    <!-- 結局全黑轉場層 -->
     <div class="fade-overlay" id="fadeOverlay">
         <div class="game-over-text" id="gameOverText">
             命運從不遺忘。<br>
@@ -270,6 +268,7 @@
         let currentIndex = 0;
         let isWaitingForChoice = false;
         let gameActive = false;
+        let textAnimationLock = false; // 新增：控制文字淡入動畫期間的點擊鎖
 
         const titleScreen = document.getElementById("titleScreen");
         const storyWrapper = document.getElementById("storyWrapper");
@@ -280,21 +279,20 @@
         const gameContainer = document.getElementById("gameContainer");
 
         function startGame() {
-            // 關鍵修改：立刻鎖定標題畫面的滑鼠點擊事件，防止玩家瘋狂連點
             titleScreen.style.pointerEvents = "none";
             titleScreen.style.opacity = "0";
             
-            // 轉場期間 gameActive 依然是 false，advanceText() 會直接被擋掉
             setTimeout(() => {
                 titleScreen.style.display = "none";
-                gameActive = true; // 2秒轉場結束後，才正式允許點擊推進故事
+                gameActive = true; 
                 clickHint.style.display = "block";
                 showNextParagraph();
             }, 2000);
         }
 
         function advanceText() {
-            if (!gameActive || isWaitingForChoice) return;
+            // 如果遊戲尚未激活、正在等待選擇、或處於文字轉場鎖定狀態，直接阻斷點擊
+            if (!gameActive || isWaitingForChoice || textAnimationLock) return;
             showNextParagraph();
         }
 
@@ -309,6 +307,9 @@
                     return;
                 }
 
+                // 觸發文字顯現，啟動動畫鎖
+                textAnimationLock = true;
+                clickHint.style.opacity = "0.1"; // 削弱點擊提示的亮度，提示玩家此時不能點
                 storyWrapper.innerHTML = "";
 
                 const p = document.createElement("div");
@@ -319,11 +320,20 @@
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
 
+                // 隨著 CSS 轉場結束（1200毫秒），解除鎖定
+                setTimeout(() => {
+                    textAnimationLock = false;
+                    clickHint.style.opacity = "1"; // 恢復點擊提示亮度
+                }, 1200);
+
                 if (lineData.isNextPage) {
-                    clickHint.innerHTML = "【 摘下眼罩 】";
-                    gameContainer.onclick = function() {
-                        window.location.href = "page2.html";
-                    };
+                    // 如果到了結尾頁，解除常規 advanceText，綁定換頁
+                    setTimeout(() => {
+                        clickHint.innerHTML = "【 摘下眼罩 】";
+                        gameContainer.onclick = function() {
+                            window.location.href = "page2.html";
+                        };
+                    }, 1200);
                 }
             } else {
                 if (currentPhase === "intro") {
@@ -376,6 +386,7 @@
             currentPhase = "intro";
             currentIndex = 0;
             isWaitingForChoice = false;
+            textAnimationLock = false;
             storyWrapper.innerHTML = "";
             choiceContainer.innerHTML = "";
             choiceContainer.style.display = "none";
@@ -386,12 +397,11 @@
             gameContainer.onclick = advanceText;
             clickHint.innerHTML = "【 點擊繼續 】";
             
-            titleScreen.style.pointerEvents = "auto"; // 恢復標題畫面點擊功能
+            titleScreen.style.pointerEvents = "auto"; 
             titleScreen.style.display = "flex";
             setTimeout(() => { titleScreen.style.opacity = "1"; }, 50);
             gameActive = false;
         }
     </script>
 </body>
-</html>
 </html>
