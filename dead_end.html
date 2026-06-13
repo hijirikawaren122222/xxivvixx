@@ -12,6 +12,7 @@
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
             overflow: hidden; -webkit-user-select: none; user-select: none;
         }
+        /* 全螢幕盲點推進容器 */
         .game-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
@@ -20,32 +21,37 @@
         .story-paragraph {
             font-size: 13pt; line-height: 2; letter-spacing: 2px; opacity: 0;
             transition: opacity 1.5s ease-in-out; text-shadow: 0 0 8px rgba(255,255,255,0.2);
-            margin-bottom: 25px;
         }
         .story-paragraph.visible { opacity: 1; }
+        
+        .click-hint {
+            position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
+            font-size: 10pt; color: #222; letter-spacing: 4px; animation: pulse 3s infinite; pointer-events: none;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body>
 
     <div class="game-container" onclick="gameContainerClicked()">
-        <div class="game-stage" id="storyWrapper"></div>
+        <div class="game-stage">
+            <div id="storyWrapper"></div>
+        </div>
+        <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
     </div>
 
     <script>
-        // 精確切碎後的死路劇本，每一段都需要玩家「點擊畫面」來推進
+        // 切分為四大獨立頁面的點擊劇本
         const scriptData = [
-            { text: "你踏入冰界的瞬間，世界碎裂了。<br>不是轟然崩塌，而是像一面鏡子從邊緣開始剝落，每一片碎片都映出不同的你──你站在暴雨中的你、你打開邀請函的你、你摘下眼罩的你。所有的你都在同一秒墜落，墜入同一個深不見底的黑暗。" },
-            { text: "然後，什麼都沒有了。<br>沒有光，沒有聲音，沒有溫度。沒有牆，沒有地板，沒有冥河，沒有阿基里斯。" },
-            { text: "你甚至不確定自己還有沒有身體。" }, // 獨立分段點擊
-            { text: "黑暗中，浮現出一行白色的字。它不大，不閃爍，只是靜靜地存在著，像墓碑上的銘文：<br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
+            { text: "你踏入冰界的瞬間，世界碎裂了。<br>不是轟然崩塌，而是像一面鏡子從邊緣開始剝落，每一片碎片都映出不同的你——你站在暴雨中的你、你打開邀請函的你、你摘下眼罩的你。所有的你都在同一秒墜落，墜入同一個深不見底的黑暗。<br><br>然後，什麼都沒有了。<br>沒有光，沒有聲音，沒有溫度。沒有牆，沒有地板，沒有冥河，沒有阿基里斯。<br><br>你甚至不確定自己還有沒有身體。<br><br>黑暗中，浮現出一行白色的字。它不大，不閃爍，只是靜靜地存在著，像墓碑上的銘文：<br>「冥河之水吞噬了一切。英雄沒有弱點，前方的時間已經斷絕。」" },
             { text: "在這條死路的盡頭，死人不會再次開口。前進只會迎來永恆的虛無。" },
-            { text: "唯有謹記神明的神諭：逆天改命者，必遭宿命的清算。" },
-            { text: "他既然抹去了起點的弱點，神明便將他的結局化為懲罰。" }, // 獨立分段點擊
+            { text: "唯有謹記神明的神諭：逆天改命者，必遭宿命的清算。他既然抹去了起點的弱點，神明便將他的結局化為懲罰。" },
             { text: "凡人，不要再執迷於前方的虛無。轉過身，讓你的時間倒流。踏上折返的歸途，回到你最初墜落的偏廳。", isEnd: true }
         ];
 
         let currentIndex = 0; let textAnimationLock = false;
         const storyWrapper = document.getElementById("storyWrapper");
+        const clickHint = document.getElementById("clickHint");
 
         function gameContainerClicked() {
             if (textAnimationLock) return;
@@ -56,8 +62,9 @@
             if (currentIndex < scriptData.length) {
                 const line = scriptData[currentIndex];
                 textAnimationLock = true;
-                
-                // 保持墓碑追加堆疊的排版美感
+                clickHint.style.opacity = "0.05"; // 點擊轉場時微弱化提示
+                storyWrapper.innerHTML = ""; // 清空上一頁，完成「切到下一頁」的乾淨視覺
+
                 const p = document.createElement("div");
                 p.className = "story-paragraph";
                 p.innerHTML = line.text;
@@ -66,7 +73,17 @@
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
                 
-                setTimeout(() => { textAnimationLock = false; }, 1250); // 稍微縮短鎖定時間讓連續點擊流暢
+                setTimeout(() => { 
+                    textAnimationLock = false; 
+                    clickHint.style.opacity = "1";
+                }, 1500);
+
+                // 如果走到最後一頁，徹底隱藏提示字，讓世界陷入死寂，等待玩家按上一頁
+                if (line.isEnd) {
+                    setTimeout(() => {
+                        clickHint.style.display = "none";
+                    }, 1500);
+                }
             }
         }
         window.onload = showNextParagraph;
