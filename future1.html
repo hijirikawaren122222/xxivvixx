@@ -6,75 +6,220 @@
     <title>🌌 北側：未來之廳 — 逆轉的星盤</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #030508; color: #dcdcdc; 
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030508;
+            color: #dcdcdc;
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
-            overflow: hidden; -webkit-user-select: none; user-select: none;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
         }
         .ambient-north {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: radial-gradient(circle at 50% 30%, rgba(74, 144, 226, 0.03) 0%, rgba(3, 5, 8, 0) 75%);
-            pointer-events: none; z-index: 10;
+            pointer-events: none;
+            z-index: 10;
         }
         .game-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 40px 20px; cursor: pointer; z-index: 20;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px 20px;
+            cursor: pointer;
+            z-index: 20;
         }
-        .game-stage { position: block; max-width: 700px; margin: 80px auto 0 auto; pointer-events: none; }
-        .story-wrapper { width: 100%; margin-bottom: 25px; }
+        .game-stage {
+            position: block;
+            max-width: 700px;
+            margin: 80px auto 0 auto;
+            pointer-events: none;
+        }
+        .story-wrapper {
+            width: 100%;
+            margin-bottom: 25px;
+        }
         .story-paragraph {
-            font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
-            transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
+            font-size: 13pt;
+            line-height: 1.9;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
         }
-        .story-paragraph.visible { opacity: 1; }
+        .story-paragraph.visible {
+            opacity: 1;
+        }
 
         .highlight-last-house {
-            color: #4a90e2; font-weight: bold;
+            color: #4a90e2;
+            font-weight: bold;
             text-shadow: 0 0 8px rgba(74, 144, 226, 0.8), 0 0 20px rgba(74, 144, 226, 0.4);
-            animation: pulseGlowBlue 2.5s infinite alternate; display: inline-block;
+            animation: pulseGlowBlue 2.5s infinite alternate;
+            display: inline-block;
         }
         @keyframes pulseGlowBlue {
-            0% { text-shadow: 0 0 6px rgba(74, 144, 226, 0.6); opacity: 0.9; }
-            100% { text-shadow: 0 0 14px rgba(74, 144, 226, 1), 0 0 25px rgba(74, 144, 226, 0.6); opacity: 1; }
+            0% {
+                text-shadow: 0 0 6px rgba(74, 144, 226, 0.6);
+                opacity: 0.9;
+            }
+            100% {
+                text-shadow: 0 0 14px rgba(74, 144, 226, 1), 0 0 25px rgba(74, 144, 226, 0.6);
+                opacity: 1;
+            }
         }
 
         .action-container {
-            display: none; width: 100%; max-width: 650px; margin: 15px auto 0 auto;
-            text-align: center; animation: fadeInElement 1.5s ease-in-out forwards; pointer-events: auto;
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            margin: 15px auto 0 auto;
+            text-align: center;
+            animation: fadeInElement 1.5s ease-in-out forwards;
+            pointer-events: auto;
         }
-        @keyframes fadeInElement { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .menu-button {
-            display: block; width: 100%; background-color: rgba(10, 15, 20, 0.85);
-            border: 1px solid #1a2530; padding: 16px 25px; margin-bottom: 16px;
-            color: #4a90e2; font-size: 11pt; letter-spacing: 2px; cursor: pointer;
-            transition: all 0.4s ease; text-align: left; line-height: 1.6;
-        }
-        .menu-button:hover {
-            border-color: #4a90e2; color: #ffffff;
-            background-color: rgba(74, 144, 226, 0.03); box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
+        @keyframes fadeInElement {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* 打亂版的星盤面板 */
+        .menu-button {
+            display: block;
+            width: 100%;
+            background-color: rgba(10, 15, 20, 0.85);
+            border: 1px solid #1a2530;
+            padding: 16px 25px;
+            margin-bottom: 16px;
+            color: #4a90e2;
+            font-size: 11pt;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .menu-button:hover {
+            border-color: #4a90e2;
+            color: #ffffff;
+            background-color: rgba(74, 144, 226, 0.03);
+            box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
+        }
+
         .zodiac-grid {
-            display: none; grid-template-columns: repeat(3, 1fr); gap: 15px;
-            max-width: 500px; margin: 30px auto; pointer-events: auto;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 30px auto;
+            pointer-events: auto;
             animation: fadeInElement 1.5s ease-in-out forwards;
         }
         .zodiac-btn {
-            background-color: rgba(5, 8, 12, 0.9); border: 1px solid #1a2530;
-            padding: 12px; color: #8fa1b3; font-size: 10pt; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s;
+            background-color: rgba(5, 8, 12, 0.9);
+            border: 1px solid #1a2530;
+            padding: 12px;
+            color: #8fa1b3;
+            font-size: 10pt;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .zodiac-btn:hover { border-color: #4a90e2; color: #fff; background-color: rgba(74, 144, 226, 0.1); }
+        .zodiac-btn:hover {
+            border-color: #4a90e2;
+            color: #fff;
+            background-color: rgba(74, 144, 226, 0.1);
+        }
+
+        .fool-card-zone {
+            display: none;
+            text-align: center;
+            margin-top: 25px;
+            pointer-events: auto;
+            animation: fadeInElement 1.8s ease-in-out forwards;
+        }
+        .tarot-title {
+            font-family: 'Uncial Antiqua', 'Cinzel Decorative', serif;
+            font-size: 38pt;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 8px;
+            text-shadow: 0 0 6px #000, 0 0 30px rgba(255, 255, 255, 0.6);
+            margin: 20px 0;
+            animation: pulseGlow 2s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% {
+                text-shadow: 0 0 6px #000, 0 0 20px rgba(255, 255, 255, 0.4);
+            }
+            100% {
+                text-shadow: 0 0 10px #000, 0 0 40px rgba(74, 144, 226, 0.8);
+            }
+        }
+        .tarot-hint {
+            font-size: 10.5pt;
+            color: #6c7279;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .return-btn {
+            background: none;
+            border: 1px solid #dfb76c;
+            color: #dfb76c;
+            padding: 14px 30px;
+            font-size: 11pt;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .return-btn:hover {
+            background-color: #dfb76c;
+            color: #000;
+            box-shadow: 0 0 15px rgba(223, 183, 108, 0.3);
+        }
 
         .click-hint {
-            position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
-            font-size: 10pt; color: #344252; letter-spacing: 4px; animation: pulse 2.5s infinite; pointer-events: none;
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 10pt;
+            color: #344252;
+            letter-spacing: 4px;
+            animation: pulse 2.5s infinite;
+            pointer-events: none;
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
     </style>
 </head>
 <body>
@@ -92,7 +237,8 @@
             <div class="zodiac-grid" id="zodiacGrid" onclick="event.stopPropagation()">
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">LIBRA</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">LEO</button>
-                <button class="zodiac-btn" onclick="chooseZodiac(true)">PISCES</button> <button class="zodiac-btn" onclick="chooseZodiac(false)">GEMINI</button>
+                <button class="zodiac-btn" onclick="chooseZodiac(true)">PISCES</button>
+                <button class="zodiac-btn" onclick="chooseZodiac(false)">GEMINI</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">TAURUS</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">SAGITTARIUS</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">SCORPIO</button>
@@ -101,6 +247,12 @@
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">CAPRICORN</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">VIRGO</button>
                 <button class="zodiac-btn" onclick="chooseZodiac(false)">AQUARIUS</button>
+            </div>
+
+            <div class="fool-card-zone" id="foolCardZone" onclick="event.stopPropagation()">
+                <div class="tarot-title">THE FOOL</div>
+                <div class="tarot-hint">「這是未來的宿命。帶著它返回大廳。」</div>
+                <button class="return-btn" onclick="returnToCloser()">帶著愚者返回大廳</button>
             </div>
         </div>
         <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
@@ -116,29 +268,48 @@
             { text: "冥河。你沒有見過它，但你的身體認識它。你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。<br><br>阿基里斯就站在河的正中央。" },
             { text: "他像一尊戰神雕像，按劍而立，右手纏著繃帶，腳踝處裸露的皮膚在黑暗中散發著微弱的金色光芒。他的雙眼睜開，凝視著不存在的遠方，瞳孔裡沒有倒影。冥河的水汽在他腳下擴散，形成了一道無法逾越的冰界——那不是牆，而是一種「你不能靠近」的法則，刻在你的骨頭裡，像與生來的恐懼。" },
             { text: "他的身體沒有任何傷痕。沒有任何弱點。你知道那個神話——他連腳踝都浸入了冥河。在這個時空裡，他是一隻沒有致命處的怪物，一個打破了宿命的半神。<br><br>在你面前，虛空中懸浮著一座巨大的青銅星盤。星盤的邊緣刻著十二個星座符號，但它們沒有發光，沒有運轉。指針懸空，猶豫不決，像一個站在懸崖邊緣的人。" },
-            { text: "結界邊緣的牆上，浮現著一行幾乎被磨滅的文字。字跡不是刻上去的，而是像被水漬浸出來的，模糊、顫抖，像將死之人最後的呼吸：<br>「半神之軀，其命運始於雙子，困於巨蟹。貪戀不死的英雄，將致命的腳踝也交給了冥河。他抹去了一切弱點，成為無法戰勝的怪物，妄圖以此違抗黃道的終點。」", triggerActionBtn: true }
+            { text: "結界邊緣的牆上，浮現著一行幾乎被磨滅的文字。字跡不是刻上去的，而是像被水漬浸出來的，模糊、顫抖，像將死之人最後的呼吸：<br>「半神之軀，其命運始於雙子，困於巨蟹。貪戀不死的英雄，將致命的腳踝也交給了冥河。他抹去了一切弱點，成為無法戰勝的怪物，妄圖以此違抗黃道的終點。」",
+                triggerActionBtn: true }
         ];
 
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
             { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。" },
-            { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」", triggerNextPage: true },
-            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」", triggerZodiacGrid: true }
+            { text: "空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」",
+                triggerNextPage: true },
+            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」",
+                triggerZodiacGrid: true }
         ];
 
-        let currentScript = initScript; let currentIndex = 0;
-        let textAnimationLock = false; let isWaitingMenu = false;
+        const winScript = [
+            { text: "你將指針撥向雙魚座。星盤發出一聲低沉的轟鳴，像古老的齒輪咬合。十二個符號同時熄滅，只剩雙魚座的那一對魚型圖騰，燒成熾熱的白色。" },
+            { text: "阿基里斯的雕像從腳踝開始碎裂。裂痕向上蔓延，穿過膝蓋、腰腹、胸膛，直到他的臉。他沒有發出聲音——雕像不應該發出聲音——但你聽見了某種遙遠的、像風穿過廢墟的哀鳴。" },
+            { text: "冥河的黑水完全倒流，縮回虛空中。冰界碎裂，化為一地黑色的碎屑，像燒過的紙灰。" },
+            { text: "在黑曜石桌的廢墟中，滾出一樣東西。那是一張塔羅牌，邊緣燒焦，牌面上畫著一個穿著華服的旅人，正踏向懸崖的邊緣。他的腳下是深淵，但他沒有低頭。他的身後有一隻白色的小狗在吠叫，但他沒有回頭。",
+                triggerFoolCard: true }
+        ];
+
+        let currentScript = initScript;
+        let currentIndex = 0;
+        let textAnimationLock = false;
+        let isWaitingMenu = false;
 
         const storyWrapper = document.getElementById("storyWrapper");
         const clickHint = document.getElementById("clickHint");
         const initActionZone = document.getElementById("initActionZone");
         const zodiacGrid = document.getElementById("zodiacGrid");
+        const foolCardZone = document.getElementById("foolCardZone");
 
         window.addEventListener('pageshow', function(event) {
-            storyWrapper.innerHTML = ""; initActionZone.style.display = "none"; 
-            zodiacGrid.style.display = "none"; clickHint.style.display = "block";
-            isWaitingMenu = false; textAnimationLock = false; currentIndex = 0;
+            storyWrapper.innerHTML = "";
+            initActionZone.style.display = "none";
+            zodiacGrid.style.display = "none";
+            foolCardZone.style.display = "none";
+            clickHint.style.display = "block";
+            isWaitingMenu = false;
+            textAnimationLock = false;
+            currentIndex = 0;
 
             if (localStorage.getItem("future_dead_end_reached") === "true") {
                 localStorage.removeItem("future_dead_end_reached");
@@ -157,18 +328,32 @@
         function showNextParagraph() {
             if (currentIndex < currentScript.length) {
                 const lineData = currentScript[currentIndex];
-                textAnimationLock = true; clickHint.style.opacity = "0.1"; storyWrapper.innerHTML = "";
-                const p = document.createElement("div"); p.className = "story-paragraph"; p.innerHTML = lineData.text;
+                textAnimationLock = true;
+                clickHint.style.opacity = "0.1";
+                storyWrapper.innerHTML = "";
+                const p = document.createElement("div");
+                p.className = "story-paragraph";
+                p.innerHTML = lineData.text;
                 storyWrapper.appendChild(p);
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
-                setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
+                setTimeout(() => { textAnimationLock = false;
+                    clickHint.style.opacity = "1"; }, 1200);
 
                 if (lineData.triggerActionBtn) {
-                    setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; initActionZone.style.display = "block"; }, 1200);
+                    setTimeout(() => { isWaitingMenu = true;
+                        clickHint.style.display = "none";
+                        initActionZone.style.display = "block"; }, 1200);
                 }
                 if (lineData.triggerZodiacGrid) {
-                    setTimeout(() => { isWaitingMenu = true; clickHint.style.display = "none"; zodiacGrid.style.display = "grid"; }, 1200);
+                    setTimeout(() => { isWaitingMenu = true;
+                        clickHint.style.display = "none";
+                        zodiacGrid.style.display = "grid"; }, 1200);
+                }
+                if (lineData.triggerFoolCard) {
+                    setTimeout(() => { isWaitingMenu = true;
+                        clickHint.style.display = "none";
+                        foolCardZone.style.display = "block"; }, 1200);
                 }
             }
         }
@@ -181,13 +366,21 @@
 
         function chooseZodiac(isCorrect) {
             if (isCorrect) {
-                alert("你選擇了 Pisces。星盤爆發出白光，你獲取了 THE FOOL。");
-                localStorage.setItem("future_puzzle_solved", "true");
-                window.location.href = "thecloser.html";
+                zodiacGrid.style.display = "none";
+                isWaitingMenu = false;
+                clickHint.style.display = "block";
+                currentScript = winScript;
+                currentIndex = 0;
+                showNextParagraph();
             } else {
                 alert("星盤反轉，寒氣凍結了你。");
                 window.location.reload();
             }
+        }
+
+        function returnToCloser() {
+            localStorage.setItem("future_puzzle_solved", "true");
+            window.location.href = "thecloser.html";
         }
     </script>
 </body>
