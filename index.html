@@ -1,445 +1,411 @@
-<!DOCTYPE html>
+import os
+
+# 定義 HTML 內容
+html_content = """<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>11:59 - 命運的序幕｜VIXX 文字解謎遊戲</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神明的宴會 - 開章</title>
     <style>
-        * {
+        /* 基礎全域樣式 - 嚴格遵循相容性標準 */
+        *, *::before, *::after {
             box-sizing: border-box;
         }
-        body {
-            background: #0b0812;
-            font-family: 'Georgia', 'Times New Roman', '宋體', serif;
-            color: #ece4d7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        
+        body, html {
             margin: 0;
-            padding: 20px;
-        }
-        .game-container {
-            max-width: 750px;
+            padding: 0;
             width: 100%;
-            background: rgba(10, 8, 18, 0.92);
-            border-radius: 28px;
-            border: 1px solid #c6a43b;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.6), inset 0 0 8px rgba(198,164,59,0.2);
+            height: 100%;
+            background-color: #0b0d10; /* 黑水銀深色底 */
+            color: #dcdcdc; /* 霧白文字 */
+            font-family: 'Times New Roman', 'Noto Serif TC', 'SimSun', serif;
             overflow: hidden;
-            backdrop-filter: blur(2px);
+            -webkit-user-select: none;
+            user-select: none;
         }
-        .game-text {
-            padding: 26px 24px;
-            min-height: 380px;
-            max-height: 480px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.45);
-            font-size: 1.02rem;
-            line-height: 1.55;
-            text-shadow: 0 1px 1px black;
-            border-bottom: 1px solid #c6a43b;
+
+        /* 氛圍濾鏡：深夜暴雨與死月光芒 */
+        .ambient-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(86, 179, 162, 0.05) 0%, rgba(11, 13, 16, 0) 100%);
+            pointer-events: none;
+            z-index: 10;
         }
-        .game-text p {
-            margin: 0 0 12px 0;
-        }
-        .game-text hr {
-            border-color: #c6a43b55;
-            margin: 14px 0;
-        }
-        .badge {
-            background: #c6a43b22;
-            border-left: 3px solid #c6a43b;
-            padding: 6px 12px;
-            font-family: monospace;
-            margin: 12px 0;
-            font-size: 0.85rem;
-        }
-        .game-actions {
-            padding: 20px 24px;
-            background: #0c0a14;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            border-top: 1px solid #2a2335;
-        }
-        button {
-            background: #1e1a2a;
-            border: 1px solid #c6a43b;
-            color: #f5ecd9;
-            font-family: 'Segoe UI', 'Georgia', monospace;
-            font-size: 0.85rem;
-            font-weight: bold;
-            padding: 7px 18px;
-            border-radius: 40px;
+
+        /* 遊戲主要容器 */
+        .game-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px 20px;
             cursor: pointer;
-            transition: 0.2s;
-            letter-spacing: 1px;
         }
-        button:hover {
-            background: #c6a43b;
-            color: #0b0812;
-            border-color: #ffdfa5;
-            transform: translateY(-2px);
+
+        /* 文字故事區塊 */
+        .story-wrapper {
+            position: block;
+            max-width: 700px;
+            margin: 80px auto 0 auto;
+            min-height: 300px;
         }
-        button:active {
-            transform: translateY(1px);
+
+        .story-paragraph {
+            font-size: 13pt;
+            line-height: 1.8;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            text-shadow: 0 0 8px rgba(0,0,0,0.8);
         }
-        .reset-btn {
-            background: #2c1a28;
-            border-color: #a26a7a;
+
+        .story-paragraph.visible {
+            opacity: 1;
         }
-        .reset-btn:hover {
-            background: #a26a7a;
-            color: #1c0f18;
+
+        /* 特殊名詞著色 */
+        .highlight-green {
+            color: #56b3a2; /* 硫磺般的青綠 */
+            text-shadow: 0 0 5px rgba(86, 179, 162, 0.5);
         }
-        .grid-3x3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+
+        .highlight-gold {
+            color: #dfb76c; /* 金色火焰/獸瞳 */
+            text-shadow: 0 0 5px rgba(223, 183, 108, 0.5);
         }
-        .grid-cell {
-            background: #1e182a;
-            border: 1px solid #c6a43b;
-            border-radius: 12px;
-            padding: 12px 4px;
+
+        .highlight-greek {
+            font-style: italic;
+            color: #a0aab5;
+            border-bottom: 1px dashed #a0aab5;
+            padding-bottom: 2px;
+        }
+
+        /* 點擊提示標籤 */
+        .click-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            width: 100%;
             text-align: center;
-            font-weight: bold;
+            font-size: 10pt;
+            color: #55585d;
+            letter-spacing: 4px;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
+        }
+
+        /* 選擇肢區塊 */
+        .choice-container {
+            position: block;
+            max-width: 650px;
+            margin: 40px auto 0 auto;
+            display: none; /* 預設隱藏 */
+            text-align: center;
+        }
+
+        .choice-button {
+            display: block;
+            width: 100%;
+            background-color: rgba(15, 18, 22, 0.8);
+            border: 1px solid #343a40;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            color: #b5b9be;
+            font-size: 11pt;
+            letter-spacing: 2px;
             cursor: pointer;
-            transition: 0.1s;
-            font-size: 0.9rem;
+            transition: all 0.4s ease;
+            text-align: left;
+            line-height: 1.6;
         }
-        .grid-cell:hover {
-            background: #c6a43b;
-            color: black;
+
+        .choice-button:hover {
+            border-color: #dfb76c;
+            color: #dfb76c;
+            background-color: rgba(223, 183, 108, 0.05);
+            box-shadow: 0 0 15px rgba(223, 183, 108, 0.1);
         }
-        .constellation-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
+
+        /* 結局畫面全黑遮罩 */
+        .fade-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2.5s ease-in-out;
+            z-index: 100;
         }
-        .game-text::-webkit-scrollbar {
-            width: 5px;
+
+        .fade-overlay.blackout {
+            opacity: 1;
+            pointer-events: auto;
         }
-        .game-text::-webkit-scrollbar-track {
-            background: #1a1522;
-        }
-        .game-text::-webkit-scrollbar-thumb {
-            background: #c6a43b;
-            border-radius: 10px;
-        }
-        footer {
-            font-size: 0.7rem;
+
+        .game-over-text {
+            position: absolute;
+            top: 45%;
+            left: 0;
+            width: 100%;
             text-align: center;
-            padding: 10px;
-            color: #6a5a4a;
+            font-size: 14pt;
+            color: #ffffff;
+            letter-spacing: 6px;
+            line-height: 2;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .game-over-text.show {
+            opacity: 1;
+        }
+
+        .restart-btn {
+            display: inline-block;
+            margin-top: 30px;
+            background: none;
+            border: 1px solid #dfb76c;
+            color: #dfb76c;
+            padding: 10px 25px;
+            font-size: 10pt;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .restart-btn:hover {
+            background-color: #dfb76c;
+            color: #000;
         }
     </style>
 </head>
 <body>
-<div class="game-container" id="gameRoot">
-    <div class="game-text" id="gameText"></div>
-    <div class="game-actions" id="gameActions"></div>
-    <footer>Κήρ · 命運注視著永恆的11:59</footer>
-</div>
 
-<script>
-    // ------------------- 遊戲狀態 -------------------
-    let game = {
-        scene: "start",    // start, hall, puzzle1, puzzle2, puzzle3, final, ending
-        past: false,
-        present: false,
-        future: false,
-        // 輔助旗標
-        extraMsgShown: false
-    };
+    <div class="ambient-rain"></div>
 
-    // 輔助函數：更新畫面
-    function updateUI() {
-        const textDiv = document.getElementById("gameText");
-        const actionsDiv = document.getElementById("gameActions");
-        if (!textDiv || !actionsDiv) return;
+    <div class="game-container" id="gameContainer" onclick="advanceText()">
+        <div class="story-wrapper" id="storyWrapper">
+            </div>
 
-        // 根據場景渲染
-        switch (game.scene) {
-            case "start": renderStart(textDiv, actionsDiv); break;
-            case "hall": renderHall(textDiv, actionsDiv); break;
-            case "puzzle1": renderPuzzle1(textDiv, actionsDiv); break;
-            case "puzzle2": renderPuzzle2(textDiv, actionsDiv); break;
-            case "puzzle3": renderPuzzle3(textDiv, actionsDiv); break;
-            case "final": renderFinal(textDiv, actionsDiv); break;
-            case "ending": renderEnding(textDiv, actionsDiv); break;
-            default: renderStart(textDiv, actionsDiv);
-        }
-    }
+        <div class="choice-container" id="choiceContainer">
+            </div>
 
-    // 重置遊戲
-    function resetGame() {
-        game = {
-            scene: "start",
-            past: false,
-            present: false,
-            future: false,
-            extraMsgShown: false
+        <div class="click-hint" id="clickHint">【 點擊任意處繼續 】</div>
+    </div>
+
+    <div class="fade-overlay" id="fadeOverlay">
+        <div class="game-over-text" id="gameOverText">
+            命運從不遺忘。<br>
+            <button class="restart-btn" onclick="restartGame(event)">重新開始？</button>
+        </div>
+    </div>
+
+    <script>
+        // 腳本數據結構
+        const scriptData = {
+            intro: [
+                { text: "門開章：雨夜・禮物與代價", isTitle: true },
+                { text: "雨不是從天空落下，而是從地底、牆縫、你的骨頭縫隙裡滲出來。" },
+                { text: "你已經在這條石板路上走了很久，久到分不清自己是醒著還是在做夢。每一次呼吸，肺裡都像灌進了<span class='highlight-green'>黑色的水銀</span>。" },
+                { text: "路燈是死去的月亮。它們發出的光不是黃色，而是<span class='highlight-green'>硫磺般的青綠</span>，把整條街照得像一座沉沒的祭壇。" },
+                { text: "你的衣服濕透了，貼在皮膚上，像第二層正在腐爛的皮。" },
+                { text: "然後——你看見他了。" },
+                { text: "一個身影從雨幕中走出來，不是走，更像是雨水把他凝結成人形。他很高，高到不應該存在於人間。他沒有五官，臉上只有一片光滑的黑暗，但你感覺得到他在看你。" },
+                { text: "他伸出手。" },
+                { text: "那隻手穿過你的胸膛，沒有痛，只有一種被掏空的感覺。當他抽回手時，你低頭——自己毫髮傷，但掌心多了一樣東西。<br>不是一樣。是兩樣。" },
+                { text: "第一樣你認得：一封黑色的信函。火漆上壓著一隻睜開的眼睛，瞳孔深處有<span class='highlight-gold'>金色的火焰</span>在燃燒。那是邀請函，邀請你參加一場「神明的宴會」。" },
+                { text: "第二樣你從未見過：一個<span class='highlight-gold'>黑色蕾絲眼罩</span>。它輕得像霧，摸起來卻有冰涼的觸感，彷彿剛從某個死去的人的臉上取下來。" },
+                { text: "眼罩的內側，用銀線繡著一行極小的古希臘文——你勉強辨認出幾個字：<br><span class='highlight-greek'>「閉上凡人的眼，才能看見神的真實。」</span>" },
+                { text: "那個人形的雨水已經消失了。只剩下你和這兩樣東西，站在暴雨中央。" },
+                { text: "不遠處，一棟建築從黑暗中浮現。它原本並不在那裡——或者它一直在，只是你的肉眼看不見。大門微啟，裡面透出溫暖卻詭異的<span class='highlight-gold'>金光</span>，像一隻半睜的獸瞳。" },
+                { text: "雨水落在眼罩上，沒有濡濕，反而像被吞噬了。" },
+                { text: "你知道，這是一個選擇。或許是這輩子唯一真正自由的選擇。" }
+            ],
+            choice1: [
+                { text: "你猶豫了很久。雨水在你的腳邊匯成淺淺的水窪，倒映著那扇發光的門。" },
+                { text: "終於，你舉起那隻眼罩。蕾絲貼上你的皮膚，冰涼，像死者的親吻。你把絲帶繞過後腦，繫緊。" },
+                { text: "黑暗降臨。不是普通的黑暗——是一種有重量的黑暗，壓在你的眼皮上，壓在你的聽覺上，壓在你的靈魂上。" },
+                { text: "你閉上眼。" },
+                { text: "然後，你聽見門在自己面前敞開的聲音。不是吱呀作響，而是像水面破開一個洞，所有的聲音都被吸進那個洞裡。" },
+                { text: "你跨出一步。" },
+                { text: "——沒有踩到地板。你踩到了虛空。" },
+                { text: "但虛空接住了你。" },
+                { text: "當你再次睜開眼時（隔著眼罩，你其實什麼也看不見，但你「知道」自己看見了），你已經站在一座巨大宴會廳的正中央。" },
+                { text: "你沒有經過大門。你甚至不確定自己是不是還活著。" },
+                { text: "但你聞到了酒香、花香、以及某種時間靜止之後才會產生的、像舊書頁一樣的氣氣。" },
+                { text: "宴會開始了。或者說，它從未開始，也從未結束。" },
+                { text: "<span class='highlight-gold'>（遊戲進入大廳中央主場景，時間凍結於 11:59）</span>", isEnd: true }
+            ],
+            choice2: [
+                { text: "你的手指一鬆。" },
+                { text: "邀請函和眼罩同時掉進地面的水窪裡。它們沒有沉下去，而是浮在水面上，像兩隻死去的蝴蝶。" },
+                { text: "你轉身就跑。" },
+                { text: "雨水像是突然有了生命，它們纏住你的腳踝，試圖把你拉回來。你踢開它們，拚命奔跑。那座建築的光芒在身後迅速縮小，變成一個針尖大的金色斑點。" },
+                { text: "然後，消失了。" },
+                { text: "四周陷入完全的寂寂。" },
+                { text: "雨停了。不是漸漸停，是瞬間停。最後一滴雨懸在半空中，凝結成冰珠，然後碎裂。" },
+                { text: "碎裂的聲音變成了笑聲。" },
+                { text: "低沉、緩慢、從四面八方同時湧來的笑聲。你摀住耳朵，但它們從你的骨頭裡傳進來。" },
+                { text: "「可憐的凡人，」那個聲音說，不帶任何感情，像神在朗讀一份死刑判決書，「你丟得掉信函，丟得掉眼罩，但你丟不掉這條雨夜裡踩過的每一塊石板。」" },
+                { text: "「你躲過了我為你佈下的第一道門，但命運有千百扇門，而每一扇都已經為你敞開。」" },
+                { text: "你的腳下開始震動。石板裂開，裂縫裡湧出金色的光芒——不是溫暖的光，而是熔爐的光。" },
+                { text: "「下一次，你將沒有選擇的機會。因為你已經把自己交還給了我。」" },
+                { text: "你的意識在光芒中消散。" },
+                { text: "TRIGGER_BLACKOUT", isSpecial: true } // 特殊指令觸發全黑死亡結局
+            ]
         };
-        updateUI();
-    }
 
-    // 通用失敗結局 (死亡或永恆囚禁)
-    function gameOver(reason, fromScene) {
-        const textDiv = document.getElementById("gameText");
-        textDiv.innerHTML = `<p style="color:#e6b8b8;">❌ ${reason}</p><p>命運之線斷裂，你成為宴會中的一具蠟像，永世困於11:59……</p>`;
-        const actionsDiv = document.getElementById("gameActions");
-        actionsDiv.innerHTML = `<button class="reset-btn" id="gameOverReset">♾️ 重新編織命運</button>`;
-        document.getElementById("gameOverReset")?.addEventListener("click", resetGame);
-        game.scene = "ending";
-    }
+        let currentPhase = "intro"; 
+        let currentIndex = 0;
+        let isWaitingForChoice = false;
 
-    // ------------------- 序章 -------------------
-    function renderStart(container, actions) {
-        container.innerHTML = `
-            <p>雨，下不盡的雨。</p>
-            <p>你在這場突如其來的暴雨中狂奔，冰冷的雨水模糊了你的視線。突然，一個高大的黑影攔住了你的去路。等黑影如煙霧般消散時，你的手中憑空多了一封沉甸甸的信件——那是一封蓋著黃金神聖徽印的邀請函，邀請你參加一場「神明的宴會」。</p>
-            <p>你抬頭，一棟古老奢華的建築就在暴雨中靜靜佇立，大門微啟，裡面透出溫暖卻詭異的金光。</p>
-        `;
-        actions.innerHTML = `
-            <button id="acceptBtn">🚪 推開宴會大門，走入其中</button>
-            <button id="rejectBtn">🌩️ 撕毀邀請函，轉身逃回家中</button>
-        `;
-        document.getElementById("acceptBtn")?.addEventListener("click", () => {
-            game.scene = "hall";
-            updateUI();
-        });
-        document.getElementById("rejectBtn")?.addEventListener("click", () => {
-            container.innerHTML = `<p>你以為你能逃掉。但當你轉身的瞬間，耳邊突然響起一陣震耳欲聾的雷鳴。四周的暴雨瞬間化為血紅，一聲威嚴而冰冷的低笑在虛空中震盪：「可憐的人類，你躲得過這場宴會，卻躲不過我為你布下的其餘九十九個計謀。」你的意識瞬間被雷火吞噬，陷入無盡的黑暗。</p><p style="color:#c6a43b;">【結局：神明的注視】</p>`;
-            actions.innerHTML = `<button class="reset-btn" id="resetReject">🌑 重新開始</button>`;
-            document.getElementById("resetReject")?.addEventListener("click", resetGame);
-        });
-    }
+        const storyWrapper = document.getElementById("storyWrapper");
+        const choiceContainer = document.getElementById("choiceContainer");
+        const clickHint = document.getElementById("clickHint");
+        const fadeOverlay = document.getElementById("fadeOverlay");
+        const gameOverText = document.getElementById("gameOverText");
+        const gameContainer = document.getElementById("gameContainer");
 
-    // ------------------- 宴會廳 (主場景) -------------------
-    function renderHall(container, actions) {
-        let pointerStatus = `【時間發條】${game.past ? '⏳過去✓' : '⏳過去✗'}  ${game.present ? '⌛現在✓' : '⌛現在✗'}  ${game.future ? '⏰未來✓' : '⏰未來✗'}`;
-        container.innerHTML = `
-            <p>當你跨入大門，身後的暴雨聲戛然而止。</p>
-            <p>眾神宴會廳華美而詭異，但所有賓客像蠟像般凍結。大廳中央巨大的純金時鐘，指針死死卡在<strong>11:59</strong>。</p>
-            <p>你必須解開三個神明的謎題，取得三枚「時間發條」，才能推動命運。</p>
-            <div class="badge">${pointerStatus}</div>
-            <p>——你可以觀察周圍的線索，或直接前往三位神明的領域——</p>
-        `;
-        actions.innerHTML = `
-            <button id="observeHall">📜 環視宴會廳線索</button>
-            <button id="gotoPuzzle1">⚖️ 前往偏廳 · 赫耳墨斯與九宮幻方</button>
-            <button id="gotoPuzzle2">🍷 前往吧檯 · 狄奧尼索斯與毒酒陣</button>
-            <button id="gotoPuzzle3">🌌 前往死角 · 阿基里斯與黃道星盤</button>
-            <button class="reset-btn" id="resetHallBtn">🔄 重新開始</button>
-        `;
+        // 初始化遊戲
+        function initGame() {
+            currentPhase = "intro";
+            currentIndex = 0;
+            isWaitingForChoice = false;
+            storyWrapper.innerHTML = "";
+            choiceContainer.innerHTML = "";
+            choiceContainer.style.display = "none";
+            clickHint.style.display = "block";
+            fadeOverlay.classList.remove("blackout");
+            gameOverText.classList.remove("show");
+            gameContainer.style.pointerEvents = "auto";
+            
+            showNextParagraph();
+        }
 
-        document.getElementById("observeHall")?.addEventListener("click", () => {
-            appendMsgInHall("你靜靜掃視大廳：倒立的赫耳墨斯、被縛的普羅米修斯、持杯的酒神、敲擊密碼的女人、腳踝纏繃帶的阿基里斯、空蕩的宙斯座位……金色時鐘散發微光，等待著指針轉動。");
-        });
-        document.getElementById("gotoPuzzle1")?.addEventListener("click", () => {
-            if (!game.past) game.scene = "puzzle1";
-            else appendMsgInHall("過去發條已被取走，偏廳不再有回應。");
-            updateUI();
-        });
-        document.getElementById("gotoPuzzle2")?.addEventListener("click", () => {
-            if (!game.present) game.scene = "puzzle2";
-            else appendMsgInHall("現在發條已收入囊中，吧檯的酒神雕像歸於寂靜。");
-            updateUI();
-        });
-        document.getElementById("gotoPuzzle3")?.addEventListener("click", () => {
-            if (!game.future) game.scene = "puzzle3";
-            else appendMsgInHall("未來發條已被你掌握，阿基里斯的結界徹底消散。");
-            updateUI();
-        });
-        document.getElementById("resetHallBtn")?.addEventListener("click", resetGame);
-    }
+        // 推進文字
+        function advanceText() {
+            if (isWaitingForChoice) return; // 等待選擇中，不推進
+            showNextParagraph();
+        }
 
-    function appendMsgInHall(msg) {
-        const textDiv = document.getElementById("gameText");
-        const p = document.createElement("p");
-        p.style.color = "#c9bd97";
-        p.style.fontStyle = "italic";
-        p.innerHTML = `✦ ${msg}`;
-        textDiv.appendChild(p);
-        textDiv.scrollTop = textDiv.scrollHeight;
-    }
+        // 渲染下一段文字
+        function showNextParagraph() {
+            const currentLines = scriptData[currentPhase];
 
-    // ------------------- 謎題一：倒置九宮盲棋 (三階幻方邏輯) -------------------
-    function renderPuzzle1(container, actions) {
-        container.innerHTML = `
-            <p><strong>⚖️ 倒置偏廳 · 赫耳墨斯的九宮盲棋</strong></p>
-            <p>重力顛倒，赫耳墨斯倒立懸浮。天花板上刻著一個九宮格，只有兩個黃金棋子：</p>
-            <p>📍 左上角 (位置1) — 燃燒的火種<br>📍 正中央 (位置5) — 黃金權杖</p>
-            <p>牆上血字：「火種自天界墜落凡塵，其軌跡必經由白晝、黃昏與黑夜。偷盜者居於起點，引路者居於終點。當九宮的橫、列、對角線之『神聖命數』歸於完全相同之時，將象徵死亡與代價的冥河銀幣置於引路者的腳下，方能開啟過去的大門。」</p>
-            <p><em>三階幻方：每行、每列、對角線相加皆為15。起點=1(火種)，中央=5，請推理「引路者」(赫耳墨斯象徵的終點)應在何處？</em></p>
-            <div class="grid-3x3" id="magicGrid"></div>
-            <p style="font-size:0.85rem;">🔍 提示：幻方規則下，右下角數字必為9，代表終結與冥界引導。</p>
-            <button id="backHallP1">↩️ 返回宴會廳</button>
-        `;
+            if (currentIndex < currentLines.length) {
+                const lineData = currentLines[currentIndex];
 
-        // 建立九宮格按鈕
-        const gridDiv = document.getElementById("magicGrid");
-        if (gridDiv) {
-            gridDiv.innerHTML = "";
-            for (let i = 1; i <= 9; i++) {
-                const cell = document.createElement("div");
-                cell.className = "grid-cell";
-                cell.textContent = `位置 ${i}`;
-                cell.dataset.pos = i;
-                cell.addEventListener("click", () => {
-                    // 只有位置9正確
-                    if (i === 9) {
-                        game.past = true;
-                        appendMsgInPuzzle("✨ 冥河銀幣在右下角綻放幽光，赫耳墨斯雙蛇杖指向地面，裂開的地磚中浮現【過去的發條】！");
-                        game.scene = "hall";
-                        updateUI();
-                    } else {
-                        gameOver("你將銀幣放入錯誤的格子，九宮格瞬間碎裂，你被顛倒的重力絞碎。", "puzzle1");
-                    }
-                });
-                gridDiv.appendChild(cell);
+                // 處理特殊的劇情黑幕轉場
+                if (lineData.isSpecial && lineData.text === "TRIGGER_BLACKOUT") {
+                    triggerBadEnd();
+                    return;
+                }
+
+                // 清除上一段，只保留當前段落，維持簡潔明瞭的畫面
+                storyWrapper.innerHTML = "";
+
+                const p = document.createElement("div");
+                p.className = "story-paragraph";
+                if (lineData.isTitle) {
+                    p.style.fontSize = "16pt";
+                    p.style.textAlign = "center";
+                    p.style.color = "#dfb76c";
+                    p.style.marginBottom = "50px";
+                }
+                p.innerHTML = lineData.text;
+                storyWrapper.appendChild(p);
+
+                // 強制瀏覽器重繪以觸發 CSS 淡入動畫
+                setTimeout(() => {
+                    p.classList.add("visible");
+                }, 50);
+
+                currentIndex++;
+
+                // 如果是分支一的終點，隱藏點擊提示
+                if (lineData.isEnd) {
+                    clickHint.style.display = "none";
+                }
+            } else {
+                // 當前階段文字播畢
+                if (currentPhase === "intro") {
+                    showChoices();
+                }
             }
         }
-        document.getElementById("backHallP1")?.addEventListener("click", () => {
-            game.scene = "hall";
-            updateUI();
-        });
-    }
 
-    function appendMsgInPuzzle(msg) {
-        const textDiv = document.getElementById("gameText");
-        const p = document.createElement("p");
-        p.style.color = "#d4bc7a";
-        p.innerHTML = `✨ ${msg}`;
-        textDiv.appendChild(p);
-        textDiv.scrollTop = textDiv.scrollHeight;
-    }
-
-    // ------------------- 謎題二：十四行詩毒酒陣 -------------------
-    function renderPuzzle2(container, actions) {
-        container.innerHTML = `
-            <p><strong>🍇 吧檯 · 狄奧尼索斯的十四行詩毒酒陣</strong></p>
-            <p>黑色玫瑰鋪滿吧檯，酒神傾倒酒瓶，女人持杯凍結。七個金樽從左到右刻著古希臘字母：<strong>α, β, γ, δ, ε, ζ, η</strong>，盛著不同顏色的液體。</p>
-            <p>木紋浮現血色十四行詩（完整詩文）：<br>
-            「傲慢之水居於起點，卻拒絕在α的容器中流淌，<br>
-            憤怒之血則在正中央，與命運的δ孤獨地沸揚。<br>
-            色慾的深紫不與暴食共享，亦不屑與懶惰同席安躺，<br>
-            貪婪的暗藍，被夾在色慾與嫉妒的長廊中央。<br>
-            暴食與懶惰在末端聯手，將秘密埋葬，<br>
-            嫉妒如慘綠般陰冷，色慾則泛著誘惑的深紫，<br>
-            那抹深紫，正是讓她與你墜入愛河的蜜糖。<br>
-            貪婪不是ζ，而暴食的順位高於懶惰的死灰，<br>
-            唯有將那杯「不居於兩端、不與暴食相鄰」的深紫，注入摯愛的杯盞。」</p>
-            <p><strong>請選擇正確的酒樽：</strong></p>
-            <div style="display:flex; flex-wrap:wrap; gap:8px; margin:12px 0;">
-                ${['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η'].map(l => `<button class="wineBtn" data-letter="${l}">🍷 金樽 ${l}</button>`).join('')}
-            </div>
-            <button id="backHallP2">↩️ 返回宴會廳</button>
-        `;
-        // 正確答案: ζ (第二個樽，位置2對應字母逆序排列 => ζ)
-        document.querySelectorAll('.wineBtn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const letter = e.target.dataset.letter;
-                if (letter === 'ζ') {
-                    game.present = true;
-                    appendMsgInPuzzle("✨ 你將深紫色瓊漿滴入女人杯中，她眼眸燃起妖異紅光，對你一笑，掌心落入【現在的發條】！你無可自拔地愛上了她。");
-                    game.scene = "hall";
-                    updateUI();
-                } else {
-                    gameOver(`你選了金樽 ${letter}，毒酒腐蝕靈魂，你化為宴會廳中第七具蠟像。`, "puzzle2");
-                }
-            });
-        });
-        document.getElementById("backHallP2")?.addEventListener("click", () => {
-            game.scene = "hall";
-            updateUI();
-        });
-    }
-
-    // ------------------- 謎題三：阿基里斯的斯堤克斯黃道星盤 -------------------
-    function renderPuzzle3(container, actions) {
-        container.innerHTML = `
-            <p><strong>🌊 冰冷死角 · 阿基里斯與黃道星盤</strong></p>
-            <p>英雄阿基里斯按劍而立，冥河水汽凝結成冰界。青銅星盤懸浮半空，刻滿十二星座符號。</p>
-            <p>星盤邊緣預言：「半神之軀，其命運始於雙子，困於巨蟹，終結於黃道之尾。然其母親以逆行之法將其浸入冥河，扭轉星辰軌跡。若想破除不死結界，必須將『命運之終』，逆推回靈魂最初墜落的起點。」</p>
-            <p><strong>請選擇逆行後真正的「靈魂起點」星座：</strong></p>
-            <div class="constellation-buttons" id="constelList"></div>
-            <button id="backHallP3" style="margin-top:10px;">↩️ 返回宴會廳</button>
-        `;
-        const constellations = [
-            "白羊座", "金牛座", "雙子座", "巨蟹座", "獅子座", "處女座",
-            "天秤座", "天蠍座", "射手座", "摩羯座", "水瓶座", "雙魚座"
-        ];
-        const constDiv = document.getElementById("constelList");
-        if (constDiv) {
-            constellations.forEach(c => {
-                const btn = document.createElement("button");
-                btn.textContent = c;
-                btn.style.background = "#1e182a";
-                btn.addEventListener("click", () => {
-                    // 正確答案：金牛座 (正常終點雙魚座，逆行: 雙子->金牛)
-                    if (c === "金牛座") {
-                        game.future = true;
-                        appendMsgInPuzzle("✨ 星盤鎖定金牛座，冥河黑水碎裂，黑曜石桌崩開，一枚【未來的發條】滾至腳邊。");
-                        game.scene = "hall";
-                        updateUI();
-                    } else {
-                        gameOver(`你選擇了${c}，星盤逆轉暴走，阿基里斯的冥界結界將你凍結成永恆冰雕。`, "puzzle3");
-                    }
-                });
-                constDiv.appendChild(btn);
-            });
+        // 顯示路線選擇按鈕
+        function showChoices() {
+            isWaitingForChoice = true;
+            clickHint.style.display = "none";
+            
+            choiceContainer.innerHTML = `
+                <button class="choice-button" onclick="selectRoute('choice1', event)">
+                    【選擇一：掩上黑色蕾絲眼罩，閉上雙眼，走入宴會】
+                </button>
+                <button class="choice-button" onclick="selectRoute('choice2', event)">
+                    【選擇二：拋下所有東西——信函與眼罩，轉身逃入雨中】
+                </button>
+            `;
+            choiceContainer.style.display = "block";
         }
-        document.getElementById("backHallP3")?.addEventListener("click", () => {
-            game.scene = "hall";
-            updateUI();
-        });
-    }
 
-    // ------------------- 終章：命運指針轉動12:00 + 墜入冥界 -------------------
-    function renderFinal(container, actions) {
-        container.innerHTML = `
-            <p>你回到大廳中央，深吸一口氣，將【過去】、【現在】、【未來】三枚黃金發條依次插入純金時鐘。</p>
-            <p>你伸出手，狠狠地將凍結的指針往下一撥——</p>
-            <p><strong style="font-size:1.2rem;">喀噠。</strong> 沉重的齒輪咬合，那根死寂的指針，終於從 11:59 狠狠地跳向了 <strong style="color:#c6a43b;">12:00</strong>。</p>
-            <p>全場傳來震撼靈魂的巨響。四周空氣像碎裂的玻璃般剝落、崩塌，燈光熄滅，陷入絕對黑暗。</p>
-            <p>黑暗中，一隻冰冷顫抖的手死死抓住你——是那個剛剛對你微笑的女人。你反手緊牽住她，只想保護她逃離這裡。</p>
-            <p>然而地面塌陷，你們一同墜入無底深淵。暴風咆哮，漆黑荊棘藤蔓將你們纏繞，女人的手被迫脫離你的掌心，她被黑暗吞沒……</p>
-            <p style="color:#ab8e5c;">你的意識模糊，而那充滿荊棘的地下深處，冥王的考驗與惡魔之眼的詛咒正冰冷等待著你。</p>
-            <hr>
-            <p><strong>【TO BE CONTINUED in 《HADES: Fantasy》】</strong></p>
-        `;
-        actions.innerHTML = `<button class="reset-btn" id="finalReset">🌑 重新開始 · 再次面對命運</button>`;
-        document.getElementById("finalReset")?.addEventListener("click", resetGame);
-    }
-
-    function renderEnding(container, actions) {
-        // 一般死亡結局已經有重置按鈕；這裡不做額外處理
-    }
-
-    // 在hall場景檢查是否集齊所有發條 → 自動進入最終章
-    function checkAllGears() {
-        if (game.scene === "hall" && game.past && game.present && game.future) {
-            game.scene = "final";
-            updateUI();
+        // 玩家選擇分支
+        function selectRoute(phase, event) {
+            event.stopPropagation(); // 防止點擊事件冒泡觸發 advanceText
+            currentPhase = phase;
+            currentIndex = 0;
+            isWaitingForChoice = false;
+            
+            choiceContainer.style.display = "none";
+            clickHint.style.display = "block";
+            storyWrapper.innerHTML = "";
+            
+            showNextParagraph();
         }
-    }
 
-    // 劫持 updateUI, 在呼叫前檢查
-    const originalUpdate = updateUI;
-    window.updateUI = function() {
-        if (game.scene === "hall" && game.past && game.present && game.future) {
-            game.scene = "final";
+        // 觸發選擇二的死亡結局
+        function triggerBadEnd() {
+            gameContainer.style.pointerEvents = "none"; // 鎖定點擊
+            clickHint.style.display = "none";
+            fadeOverlay.classList.add("blackout");
+            
+            setTimeout(() => {
+                gameOverText.classList.add("show");
+            }, 2000);
         }
-        originalUpdate();
-    }.bind(this);
 
-    // 啟動
-    resetGame();
-</script>
+        // 重新開始遊戲
+        function restartGame(event) {
+            event.stopPropagation();
+            initGame();
+        }
+
+        // 網頁載入後執行
+        window.onload = initGame;
+    </script>
 </body>
 </html>
+"""
+
+# 將檔案寫入工作目錄
+file_path = "index.html"
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(html_content.strip())
