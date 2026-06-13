@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ</title>
+    <title>Κήρ - 靜止的殿堂</title>
     <!-- 引入神祕古典的 Google 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
@@ -36,7 +36,7 @@
             z-index: 10;
         }
 
-        /* 遊戲主要容器：擴展至 100% 寬高，確保盲點推進與盲點返回的順暢 */
+        /* 遊戲主要容器：擴展至 100% 寬高，確保點擊畫面的任何角落都能盲點推進 */
         .game-container {
             position: absolute;
             top: 0;
@@ -53,14 +53,13 @@
             position: block;
             max-width: 700px;
             margin: 100px auto 0 auto; 
-            pointer-events: none; /* 讓舞台不阻擋容器的全螢幕盲點點擊 */
+            pointer-events: none; /* 讓舞台不阻擋容器的全螢幕盲點推進 */
         }
 
         /* 文字故事區 */
         .story-wrapper {
             width: 100%;
             margin-bottom: 25px; 
-            pointer-events: none;
         }
 
         .story-paragraph {
@@ -76,7 +75,7 @@
             opacity: 1;
         }
 
-        /* 介面按鈕容器 - 位置舒適且絕不被底端遮擋 */
+        /* 介面按鈕容器 - 緊跟文字下方優雅浮現 */
         .animated-container {
             width: 100%;
             max-width: 650px;
@@ -84,7 +83,7 @@
             display: none; 
             text-align: center;
             animation: fadeInMenu 1.5s ease-in-out forwards;
-            pointer-events: auto; /* 恢復按鈕層的獨立點擊響應 */
+            pointer-events: auto; /* 恢復按鈕自身的點擊響應 */
         }
 
         @keyframes fadeInMenu {
@@ -115,7 +114,7 @@
             box-shadow: 0 0 12px rgba(223, 183, 108, 0.1);
         }
 
-        /* 按鈕中途變灰樣式 */
+        /* 按鈕變灰樣式 */
         .menu-button:disabled {
             background-color: rgba(15, 15, 15, 0.4);
             border-color: #16181b;
@@ -149,7 +148,7 @@
             margin: 15px 0;
         }
 
-        /* 終極詛咒時鐘 23:59:59 字體與血影顫動 */
+        /* 終極詛咒時鐘 23:59:59：尖銳古典字體 */
         .highlight-time-huge {
             color: #94131c;
             font-size: 45pt;
@@ -206,14 +205,13 @@
 
     <div class="ambient-hall"></div>
 
-    <!-- 全螢幕盲點容器 -->
     <div class="game-container" id="gameContainer" onclick="gameContainerClicked()">
         <div class="game-stage">
             
             <!-- 文字故事區 -->
             <div class="story-wrapper" id="storyWrapper"></div>
 
-            <!-- 中途：極簡三方向探索按鈕 -->
+            <!-- 中途：極簡三方向按鈕區 -->
             <div class="animated-container" id="directionContainer">
                 <button class="menu-button" id="btn-east" onclick="selectDirection('east', event)">
                     轉向東側
@@ -226,7 +224,7 @@
                 </button>
             </div>
 
-            <!-- 結尾：最終五大探索主選單（完美修復點擊響應） -->
+            <!-- 結尾：最終五大探索選單（小字已完整留存，眼罩與時鐘可點選看文案） -->
             <div class="animated-container" id="exploreContainer">
                 <button class="menu-button" onclick="handleExplore('east', event)">
                     前往東側：倒懸的雙蛇杖
@@ -260,8 +258,8 @@
             { text: "隔著黑色蕾絲，你剛才「看見」了宴會廳的光芒——金碧輝煌，燭火搖曳，眾神與賓客的輪廓如同剪影。那些影像模糊、顫抖、像浸在水中的油畫，但它們存在。<br>現在，你伸手摘下了眼罩。" },
             { text: "蕾絲從你的皮膚上滑落，像一層薄薄的死皮被揭開。那一刻，你幾乎以為自己會看見某種不該被凡人注視的神聖景象——眩目的、燒灼視網膜的、令你當場化為鹽柱的景象。<br>但什麼都沒有發生。" },
             { text: "<div class='highlight-red-large'>沒有光。沒有聲音。沒有人。</div>" }, 
-            { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
-            { text: "但舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
+            { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴 Sus——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
+            { text: "But舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
             { text: "這不再是宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
             { text: "你的呼吸聲變得異常清晰。不是因為安靜——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
             { text: "你環顧四周。" },
@@ -271,21 +269,21 @@
 
         // 獨立的三方向描述文本
         const directionTexts = {
-            east: "一道深色的帷幔低垂，從天花板直落到地面，幾乎與牆壁融為一體。帷幔的材質不是絲綢也不是天鵝絨，而是某種你從未見過的、像乾涸血液凝結成的薄片。上面用銀線繡著一個徽記──倒懸的雙蛇杖。兩條蛇纏繞著一根帶翼的權杖，蛇眼鑲著小小的綠寶石，在黑暗中微微發亮。<br>帷幔下方的縫隙裡，透出一絲不自然的風。不是流動的空氣，而是一種「應該有風但沒有」的感覺。你的影子在那個方向變得模糊、扭曲，彷彿隨時會被某種力量扯離你的腳跟。<br>你感覺自己正在倒立。但你明明站著。",
-            west: "一片黑色的玫瑰花海鋪滿地磚。不是種在土裡，不是插在瓶中，而是像地毯一樣，整齊地、毫無生機地鋪滿了從長桌盡頭到牆角的所有空間。每一朵玫瑰都是全黑的──花瓣、花萼、荊棘，全部是一種顏色的黑，但它們的黑並不相同。有的像煤炭，有的像午夜，有的像深海最底層的淤泥。<br>它們不枯萎，也不凋謝。花瓣邊緣完整得不像真的，像被時間凍結在盛開的那一秒，永遠停在那一秒。<br>空氣中有葡萄發酵的甜膩氣味，混雜著某種更深的、令人暈眩的香氣──那是酒神的氣息，即使祂不在場，氣味也像幽靈一樣滯留。你深吸一口，立刻感到一陣輕微的頭暈，彷彿有看不見的手指在你的意識邊緣輕輕撥弄。",
-            north: "宴會廳的最深處，沒有帷幔，沒有花海，只有一扇門。一扇覆蓋著黑色冰霜的門。<br>那扇門沒有把手，沒有鎖眼，只有一整片烏黑的鐵面，上面凝結著一層薄薄的冰。但冰不是透明的──它是黑色的，像從冥河底部撈上來的結晶。寒氣不是從門散發出來的，而是像呼吸一樣──規律地、緩慢地吸入又吐出。<br>你靠近一步，那股寒氣就沿著你的腳踝往上爬，像一條看不見的蛇。門縫中滲出某種氣味：鐵鏽、潮濕、以及某種無法形容的、屬於死者才會認識的味道。那是冥河水的氣味。你從未聞過，但你的身體認識它──你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。"
+            east: "一道深色的帷幔低垂，從天花板直落到地面，幾乎與牆壁融為一體。帷幔的材質不是絲綢也不是天鵝絨，而是某種你從未見過的、像乾涸血液凝結成的薄片。上面用銀線繡著一個徽記 Sus——倒懸的雙蛇杖。兩條蛇纏繞著一根帶翼的權杖，蛇眼鑲著小小的綠寶石，在黑暗中微微發亮。<br>帷幔下方的縫隙裡，透出一絲不自然的風。不是流動的空氣，而是一種「應該有風但沒有」的感覺。你的影子在那個方向變得模糊、扭曲，彷彿隨時會被某種力量扯離你的腳跟。<br>你感覺自己正在倒立。但你明明站著。",
+            west: "一片黑色的玫瑰花海鋪滿地磚。不是種在土裡，不是插在瓶中，而是像地毯一樣，整齊地、毫無生機地鋪滿了從長桌盡頭到牆角的所有空間。每一朵玫瑰都是全黑的——花瓣、花萼、荊棘，全部是一種顏色的黑，但它們的黑並不相同。有的像煤炭，有的像午夜，有的像深海最底層的淤泥。<br>它們不枯萎，也不凋謝。花瓣邊緣完整得不像真的，像被時間凍結在盛開的那一秒，永遠停在那一秒。<br>空氣中有葡萄發酵的甜膩氣味，混雜著某種更深的、令人暈眩的香氣——那是酒神的氣息，即使祂不在場，氣味也像幽靈一樣滯留。你深吸一口，立刻感到一陣輕微的頭暈，彷彿有看不見的手指在你的意識邊緣輕輕撥弄。",
+            north: "宴會廳的最深處，沒有帷幔，沒有花海，只有一扇門。一扇覆蓋著黑色冰霜的門。<br>那扇門沒有把手，沒有鎖眼，只有一整片烏黑的鐵面，上面凝結著一層薄薄的冰。但冰不是透明的——它是黑色的，像從冥河底部撈上來的結晶。寒氣不是從門散發出來的，而是像呼吸一樣——規律地、緩慢地吸入又吐出。<br>你靠近一步，那股寒氣就沿著你的腳踝往上爬，像一條看不見的蛇。門縫中滲出某種氣味：鐵鏽、潮濕、以及某種無法形容的、屬於死者才會認識的味道。那是冥河水的氣味。你從未聞過，但你的身體認識它——你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。"
         };
 
         // 【第二階段】時鐘主線劇本
         const clockScript = [
-            { text: "沒有神明。沒有賓客。沒有侍者。沒有音樂。<br>開只有這三個方向，三道門，三種靜止的等待。" },
-            { text: "你低下頭，看見自己手裡還握著那隻黑色蕾絲眼罩。它的絲帶纏繞在目的指間，像一條熟睡的蛇。銀線繡的字此刻正在微弱地發光，不是反射光──它在自行發光，像傷口癒合前那一圈若有若無的螢光。<br>你湊近，辨認那行古希臘文：<br><span class='highlight-gold-line'>「過去、現在、未來。三者不全，時針不動。」</span>" }, 
-            { text: "你抬起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的──像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針──三根指針，死死地卡在最頂端。" },
+            { text: "沒有神明。沒有賓客。沒有侍者。沒有音樂。<br>只有這三個方向，三道門，三種靜止的等待。" },
+            { text: "你低下頭，看見自己手裡還握著那隻黑色蕾絲眼罩。它的絲帶纏繞在你的指間，像一條熟睡的蛇。銀線繡的字此刻正在微弱地發光，不是反射光——它在自行發光，像傷口癒合前那一圈若有若無的螢光。<br>你湊近，辨認那行古希臘文：<br><span class='highlight-gold-line'>「過去、現在、未來。三者不全，時針不動。」</span>" }, 
+            { text: "你抬起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的——像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針——三根指針，死死地卡在最頂端。" },
             { text: "<div class='highlight-time-huge' id='horrorClock'>23:59:59</div>", triggerClockChaos: true }, 
             { text: "秒針在顫抖。不是你眼睛的錯覺，而是它真的在顫抖，像一個溺水的人在最深的水底、在最絕望的時刻、最後一次伸出手臂。" },
-            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡──這個宴會廳──已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
+            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡——這個宴會廳——已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
             { text: "宴會廳從頭到尾都只是一座墳墓。一座為時間建造的墳墓。而你是唯一的送葬者。" },
-            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了──或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。", triggerFinalClimax: true } 
+            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了——或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。", triggerFinalClimax: true } 
         ];
 
         // 【第三階段】最終高潮文本
@@ -293,9 +291,9 @@
             { text: "只有心跳。<br>只有那根永遠顫抖的秒針。<br>只有三道門，三個謎題，以及一個你尚未理解的命運。", waitForClickBeforeMenu: true }
         ];
 
-        // 眼罩與時鐘點選後的獨立觀看文本
+        // 五大選擇中，眼罩與時鐘點選後的獨立觀看文本
         const exploreTexts = {
-            mask: "當你重新戴上眼罩，黑暗再次降臨。但這一次，你看見了幻覺──賓客們的身影短暫地浮現，像溺水者的記憶。你可能會瞥見某些線索，但它們稍縱即逝。",
+            mask: "當你重新戴上眼罩，黑暗再次降臨。但這一次，你看見了幻覺——賓客們的身影短暫地浮現，像溺水者的記憶。你可能會瞥見某些線索，但它們稍縱即逝。",
             clock: "純金時鐘靜靜佇立。指針仍然卡在23:59:59。秒針仍然在顫抖。你感覺它在等你。<br>黑色的鏡面鐘面裡，戴著蕾絲眼罩的你正冷冷地與你對視。秒針震顫的頻率，正一擊一擊，與你胸腔內固執的心跳完美同步。"
         };
 
@@ -305,7 +303,7 @@
         let textAnimationLock = false;
         let isWaitingMenu = false;
         let isReadingDirectionText = false; 
-        let isReadingExploreText = false; 
+        let isReadingExploreText = false; // 新增：是否正在觀看眼罩/時鐘的附加文案
         let clockTimer = null; 
         
         let visitedDirections = { east: false, west: false, north: false };
@@ -335,16 +333,16 @@
         function gameContainerClicked() {
             if (textAnimationLock) return;
             
-            // 正在選單主介面中（且不是在讀文案），盲點點擊無效
+            // 正在選單畫面，盲點推進失效（除非是文案狀態）
             if (isWaitingMenu && !isReadingDirectionText && !isReadingExploreText) return; 
 
-            // 中途方向描述文案，盲點返回選單
+            // 中途三方向文案，點擊畫面返回探索
             if (isReadingDirectionText) {
                 returnToDirectionMenu();
                 return;
             }
 
-            // 結尾眼罩/時鐘描述文案，盲點返回五大選單
+            // 結尾眼罩/時鐘文案，點擊畫面返回五大選單
             if (isReadingExploreText) {
                 returnToExploreMenu();
                 return;
@@ -394,11 +392,16 @@
                         currentIndex = 0;
                     }, 1200);
                 }
+
+                if (lineData.waitForClickBeforeMenu) {
+                    // 看完「只有心跳」後靜止，留給下一次點擊做 else 轉折
+                    setTimeout(() => {}, 1200);
+                }
             } else {
-                // 手動點完「只有心跳」後，交出最終選項
+                // 手動點完「只有心跳」後，優雅淡入五大探索按鈕
                 if (currentScript === finalClimaxScript) {
                     isWaitingMenu = true;
-                    textAnimationLock = false; // 重點修復：此處絕不鎖死，釋放鎖定
+                    textAnimationLock = true; 
                     storyWrapper.innerHTML = ""; 
                     clickHint.style.display = "none"; 
                     exploreContainer.style.display = "block"; 
@@ -406,7 +409,7 @@
             }
         }
 
-        // 中途方向探索
+        // 三方向按鈕觸發
         function selectDirection(side, event) {
             event.stopPropagation(); 
             if (textAnimationLock) return;
@@ -458,7 +461,7 @@
             }, 400);
         }
 
-        // 驅動不規則隨機閃爍時鐘
+        // 詛咒高頻無序跳動時鐘
         function startHorrorClock() {
             if (clockTimer) clearTimeout(clockTimer);
             const clockEl = document.getElementById("horrorClock");
@@ -472,27 +475,30 @@
             runChaos();
         }
 
-        // 最終五大探索按鈕核心邏輯（完美修復）
+        // 五大功能探索按鈕邏輯管理
         function handleExplore(action, event) {
-            event.stopPropagation(); // 阻止冒泡防止干擾
-            
-            // 處理：東、西、北三側路由跳轉
+            event.stopPropagation();
+            if (textAnimationLock) return;
+
             if (action === 'east') {
+                // 東側：精確跳轉到 past1.html
                 window.location.href = "past1.html";
                 return;
             } 
+            
             if (action === 'west') {
-                window.location.href = "present1.html";
+                alert("你踏入了甜膩危險的黑玫瑰陣列……（後續章節開發中）");
                 return;
             } 
+            
             if (action === 'north') {
-                window.location.href = "future1.html";
+                alert("你逼近了散發著冥河氣味的冰霜鐵門……（後續章節開發中）");
                 return;
             }
 
-            // 處理：眼罩與時鐘就地展示文案
+            // 處理：眼罩與時鐘的點擊接入文案邏輯
             textAnimationLock = true;
-            exploreContainer.style.display = "none"; 
+            exploreContainer.style.display = "none"; // 隱藏按鈕
             storyWrapper.innerHTML = "";
 
             const p = document.createElement("div");
@@ -504,13 +510,13 @@
 
             setTimeout(() => {
                 textAnimationLock = false;
-                isReadingExploreText = true; 
+                isReadingExploreText = true; // 開啟觀看選項文案的狀態
                 clickHint.innerHTML = "【 點擊任意處返回選單 】";
                 clickHint.style.display = "block";
             }, 1200);
         }
 
-        // 盲點返回五大選單
+        // 看完眼罩/時鐘文案後，盲點返回五大選單（選項不灰化）
         function returnToExploreMenu() {
             textAnimationLock = true;
             isReadingExploreText = false;
@@ -518,8 +524,8 @@
             storyWrapper.innerHTML = "";
 
             setTimeout(() => {
-                textAnimationLock = false; // 釋放鎖定
-                exploreContainer.style.display = "block"; 
+                textAnimationLock = true; // 重新鎖死全螢幕盲點推進
+                exploreContainer.style.display = "block"; // 重新浮現五大選項
             }, 400);
         }
 
