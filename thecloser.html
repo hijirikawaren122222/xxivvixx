@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ - 靜止的殿堂</title>
+    <title>Κήρ</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -49,8 +49,8 @@
         .story-wrapper {
             position: block;
             max-width: 700px;
-            margin: 100px auto 0 auto; /* 微調高度維持平衡 */
-            min-height: 320px; 
+            margin: 100px auto 0 auto; 
+            min-height: 260px; /* 縮小基礎高度，騰出空間讓選項上移 */
         }
 
         .story-paragraph {
@@ -79,16 +79,36 @@
             margin: 25px 0;
             line-height: 2;
         }
+
+        /* 精緻且驚悚可怕的 23:59 字體與深紅血影 */
         .highlight-time-huge {
-            color: #c92a2a;
-            font-size: 36pt;
+            color: #9c1c1c;
+            font-size: 44pt;
             font-weight: bold;
             text-align: center;
-            letter-spacing: 8px;
-            text-shadow: 0 0 20px rgba(199, 42, 42, 0.8);
-            margin: 40px 0;
-            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 12px;
+            margin: 35px 0;
+            font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+            /* 四重陰影堆疊出不祥、厚重且有層次感的血漬陰影 */
+            text-shadow: 
+                0 0 5px #000,
+                3px 3px 0px #3a0808,
+                -1px -1px 0px #000,
+                0 0 25px rgba(156, 28, 28, 0.75);
+            /* 不穩定顫動與脈衝頻閃動畫 */
+            animation: horrorPulse 3.5s infinite ease-in-out;
         }
+
+        @keyframes horrorPulse {
+            0%, 100% { opacity: 0.95; transform: scale(1); text-shadow: 0 0 25px rgba(156, 28, 28, 0.75), 3px 3px 0px #3a0808; }
+            45% { opacity: 0.95; transform: scale(1); }
+            47% { opacity: 0.4; transform: scale(0.99) skewX(-1deg); text-shadow: 0 0 5px rgba(156, 28, 28, 0.2); } /* 扭曲與不穩定閃爍 */
+            49% { opacity: 0.9; transform: scale(1.01); }
+            51% { opacity: 0.5; transform: scale(1) skewX(1deg); }
+            53% { opacity: 0.95; transform: scale(1); }
+            78% { opacity: 0.85; text-shadow: 0 0 30px rgba(156, 28, 28, 0.85), 3px 3px 0px #2a0505; }
+        }
+
         .highlight-gold-line {
             color: #dfb76c;
             font-weight: bold;
@@ -117,11 +137,11 @@
             100% { opacity: 0.2; }
         }
 
-        /* 介面容器基礎設定 - 帶有浮現動畫 */
+        /* 介面容器基礎設定 - 按鈕上移調高 */
         .animated-container {
             position: block;
             max-width: 650px;
-            margin: 15px auto 0 auto; 
+            margin: -30px auto 0 auto; /* 改為負間距，使按鈕顯著上移，拉近與故事區域的凝聚感 */
             display: none; 
             text-align: center;
             animation: fadeInMenu 1.8s ease-in-out forwards;
@@ -155,11 +175,11 @@
             box-shadow: 0 0 12px rgba(223, 183, 108, 0.1);
         }
 
-        /* 按鈕被點擊過後的殘影/灰化樣式 */
+        /* 按鈕被點擊過後的灰化樣式 */
         .menu-button:disabled {
-            background-color: rgba(20, 20, 20, 0.4);
-            border-color: #1a1d20;
-            color: #494f55;
+            background-color: rgba(15, 15, 15, 0.35);
+            border-color: #16181b;
+            color: #3b4045;
             cursor: default;
             text-shadow: none;
             box-shadow: none;
@@ -173,7 +193,7 @@
             letter-spacing: 1px;
         }
         .menu-button:disabled span {
-            color: #3b4045;
+            color: #2b2f33;
         }
     </style>
 </head>
@@ -186,13 +206,13 @@
 
         <div class="animated-container" id="directionContainer">
             <button class="menu-button" id="btn-east" onclick="selectDirection('east', event)">
-                轉向東側：深色帷幔
+                轉向東側
             </button>
             <button class="menu-button" id="btn-west" onclick="selectDirection('west', event)">
-                轉向西側：玫瑰花海
+                轉向西側
             </button>
             <button class="menu-button" id="btn-north" onclick="selectDirection('north', event)">
-                轉向北側：黑色鐵門
+                轉向北側
             </button>
         </div>
 
@@ -215,7 +235,7 @@
             </button>
             <button class="menu-button" onclick="handleExplore('clock', event)">
                 凝視時鐘
-                <span>純金時鐘靜靜佇立。指針仍然卡在11:59。秒針仍然在顫抖。你感覺它在等你。</span>
+                <span>純金時鐘靜靜佇立。指針仍然卡在23:59。秒針仍然在顫抖。你感覺它在等你。</span>
             </button>
         </div>
 
@@ -249,12 +269,12 @@
             { text: "沒有神明。沒有賓客。沒有侍者。沒有音樂。<br>只有這三個方向，三道門，三種靜止的等待。" },
             { text: "你低下頭，看見自己手裡還握著那隻黑色蕾絲眼罩。它的絲帶纏繞在你的指間，像一條熟睡的蛇。銀線繡的字此刻正在微弱地發光，不是反射光——它在自行發光，像傷口癒合前那一圈若有若無的螢光。<br>你湊近，辨認那行古希臘文：<br><span class='highlight-gold-line'>「過去、現在、未來。三者不全，時針不動。」</span>" }, 
             { text: "你抬起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的——像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針——三根指針，死死地卡在最頂端。" },
-            { text: "<div class='highlight-time-huge'>11:59</div>" }, 
+            { text: "<div class='highlight-time-huge'>23:59</div>" }, /* 驚悚級 23:59 */
             { text: "秒針在顫抖。不是你眼睛的錯覺，而是它真的在顫抖，像一個溺水的人在最深的水底、在最絕望的時刻、最後一次伸出手臂。" },
-            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡——這個宴會廳 Sus——已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
+            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡 Sus——這個宴會廳——已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
             { text: "宴會廳從頭到尾都只是一座墳墓。一座為時間建造的墳墓。而你是唯一的送葬者。" },
-            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了——或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。<br>在這裡，沒有任何東西有聲音。" },
-            { text: "只有心跳。<br>只有那根永遠顫抖的秒針。<br>只有三道門，三個謎題，以及一個你尚未理解的命運。", isEnd: true } 
+            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了邊——或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。<br>在這裡，沒有任何東西有聲音。" },
+            { text: "只有心跳。<br>只有那根永遠顫抖的秒針。<br>只有三道門，三個謎題，以及一個你尚未理解的命命。", isEnd: true } 
         ];
 
         let currentScript = mainScript;
@@ -262,7 +282,7 @@
         
         let textAnimationLock = false;
         let isWaitingMenu = false;
-        let gameActive = true; // 直接啟用，不需透過標題點擊
+        let gameActive = true; 
         
         let visitedDirections = { east: false, west: false, north: false };
 
@@ -314,7 +334,7 @@
                 if (lineData.triggerDirectionMenu) {
                     setTimeout(() => {
                         isWaitingMenu = true;
-                        clickHint.style.display = "none";
+                        clickHint.style.display = "none"; // 冒出選項時底下完全不寫字
                         directionContainer.style.display = "block";
                     }, 1200);
                 }
@@ -334,6 +354,7 @@
             if (textAnimationLock) return;
 
             textAnimationLock = true;
+            clickHint.style.display = "none"; // 點擊期間與非最後一次點擊完後，底下皆保持空白
             storyWrapper.innerHTML = "";
             
             const p = document.createElement("div");
@@ -353,21 +374,14 @@
                 textAnimationLock = false;
                 
                 if (allVisited) {
+                    // 三個選項都點完，且最後一個方向的文字淡入完成後，正式出現點擊繼續
                     directionContainer.style.display = "none";
                     isWaitingMenu = false;
-                    clickHint.style.display = "block";
                     clickHint.innerHTML = "【 點擊繼續 】";
+                    clickHint.style.display = "block";
                     
                     currentScript = clockScript;
                     currentIndex = 0;
-                } else {
-                    clickHint.style.display = "block";
-                    clickHint.innerHTML = "【 點擊觀察其他方向 】";
-                    
-                    document.getElementById("gameContainer").onclick = function() {
-                        clickHint.style.display = "none";
-                        document.getElementById("gameContainer").onclick = advanceText;
-                    };
                 }
             }, 1200);
         }
