@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 東側：過去之廳 — 最初</title>
+    <title>東側</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
@@ -12,6 +12,7 @@
             font-family: 'Times New Roman', 'Noto Serif TC', serif;
             overflow: hidden; -webkit-user-select: none; user-select: none;
         }
+        /* 東側特殊氛圍：微弱的冰藍色冷火殘影 */
         .ambient-east {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 40%, rgba(86, 154, 179, 0.03) 0%, rgba(5, 7, 9, 0) 75%);
@@ -27,10 +28,27 @@
             transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
         }
         .story-paragraph.visible { opacity: 1; }
+        
+        /* 緩慢燃燒的冰藍色冷火文字 */
         .highlight-ice-fire {
-            color: #74b9ff; text-shadow: 0 0 8px rgba(116, 185, 255, 0.6), 0 0 20px rgba(116, 185, 255, 0.3);
-            font-style: italic; line-height: 2; display: block; margin: 20px 0;
+            color: #74b9ff; 
+            text-shadow: 0 0 8px rgba(116, 185, 255, 0.6), 0 0 20px rgba(116, 185, 255, 0.3);
+            font-style: italic; line-height: 2; display: inline-block;
         }
+        
+        /* 關鍵字「路徑」的獨立發光強化樣式 */
+        .highlight-path-glow {
+            color: #74b9ff;
+            font-weight: bold;
+            text-shadow: 0 0 10px #74b9ff, 0 0 25px rgba(116, 185, 255, 0.8);
+            animation: pathFlicker 2s infinite alternate;
+        }
+
+        @keyframes pathFlicker {
+            0%, 100% { text-shadow: 0 0 10px #74b9ff, 0 0 25px rgba(116, 185, 255, 0.8); }
+            50% { text-shadow: 0 0 4px #74b9ff, 0 0 12px rgba(116, 185, 255, 0.4); opacity: 0.85; }
+        }
+
         .click-hint {
             position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
             font-size: 10pt; color: #3b434a; letter-spacing: 4px; animation: pulse 2.5s infinite; pointer-events: none;
@@ -52,8 +70,8 @@
             { text: "赫耳墨斯就在前方。他倒立著懸浮在半空中，雙蛇杖緊握在胸口，雙眼睜開，凝視著一個不存在的方向。他的影子投射在「天花板」上，姿勢卻與他本人不同——影子跪在地上，雙手奉上一封打開的信箋。" },
             { text: "你無法與他對話。在這裡，眾神只是雕像。" },
             { text: "但他的身後，牆上浮現出一行以古希臘文寫成的、緩慢燃燒的文字。火焰是冷的，冰藍色，不散發任何溫度：<br><span class='highlight-ice-fire'>「行路之人，你正站在長廊的最初。這裡沒有路標，只有看不見的門牌。同情凡人的那位被囚於第四間密室。那封點燃一切的信函沉睡在第七間密室。跟隨神話的足跡，改寫你腳下的路徑。將你在那兩間密室中尋得的聖數相織——那便是開啟過去的鑰匙。」</span>" },
-            { text: "you你環顧四周。這間偏廳沒有門，沒有出口，沒有任何按鈕。只有你、倒立的赫耳墨斯、以及那行冰冷的火焰文字。" },
-            { text: "你忽然明白：這條長廊不只一個房間。你現在站在 最初。<br>要前往第四間與第七間，你必須……改變自己站在這裡的方式。不是用腳走，而是用更古老的方法——像神話中的英雄那樣，重新書寫你的路徑。", isEnd: true }
+            { text: "你環顧四周。這間偏廳沒有門，沒有出口，沒有任何按鈕。只有你、倒立的赫耳墨斯、以及那行冰冷的火焰文字。" },
+            { text: "你忽然明白：這條長廊不只一個房間。你現在站在 最初。<br>要前往第四間與第七間，你必須……改變自己站在這裡的方式。不是用腳走，而是用更古老的方法——像神話中的英雄那樣，重新書寫你的<span class='highlight-path-glow'>路徑</span>。", isEnd: true }
         ];
 
         let currentIndex = 0; let textAnimationLock = false;
@@ -73,8 +91,8 @@
 
                 if (line.isEnd) {
                     setTimeout(() => {
-                        clickHint.innerHTML = "【 命運提示：去改寫網址路徑前往密室吧（例如 past4.html） 】";
-                        clickHint.style.color = "#74b9ff";
+                        // 徹底拔除任何額外的網址修改提示，直接隱藏底部的點擊提示，讓世界完全靜止
+                        clickHint.style.display = "none";
                     }, 1200);
                 }
             }
