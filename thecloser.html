@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Κήρ - 靜止的殿堂</title>
+    <!-- 引入神祕古典的 Google 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -18,10 +19,12 @@
             background: radial-gradient(circle at 50% 30%, rgba(223, 183, 108, 0.02) 0%, rgba(5, 7, 9, 0) 80%);
             pointer-events: none; z-index: 10;
         }
+        /* 全螢幕點擊容器 */
         .game-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
         }
+        /* 遊戲舞台黃金留白 */
         .game-stage {
             position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none;
         }
@@ -56,7 +59,7 @@
         .menu-button span { display: block; font-size: 9.5pt; color: #6c7279; margin-top: 5px; letter-spacing: 1px; }
         .menu-button:disabled span { color: #24272a; }
 
-        /* 密碼輸入框樣式 */
+        /* 密碼輸入框區塊 */
         .unlock-zone {
             display: none; width: 100%; margin-bottom: 20px; animation: fadeInMenu 1s ease-in-out;
         }
@@ -72,6 +75,24 @@
             font-size: 11pt; letter-spacing: 2px;
         }
         .submit-btn:hover { border-color: #dfb76c; color: #fff; }
+
+        /* 終極結局按鈕樣式 */
+        .climax-action-wrapper {
+            display: none; width: 100%; text-align: center; opacity: 0;
+            transform: translateY(15px); transition: all 2s ease-in-out; pointer-events: auto;
+        }
+        .climax-action-wrapper.active { display: block; opacity: 1; transform: translateY(0); }
+        .grand-final-btn {
+            display: block; width: 100%; background-color: rgba(223, 183, 108, 0.05);
+            border: 1px solid #dfb76c; padding: 20px; color: #dfb76c;
+            font-family: 'Uncial Antiqua', 'Cinzel Decorative', serif; font-size: 14pt;
+            font-weight: bold; letter-spacing: 6px; cursor: pointer; transition: all 0.5s ease;
+            text-shadow: 0 0 15px rgba(223, 183, 108, 0.6); box-shadow: 0 0 20px rgba(223, 183, 108, 0.1);
+        }
+        .grand-final-btn:hover {
+            background-color: #dfb76c; color: #050709;
+            text-shadow: none; box-shadow: 0 0 35px rgba(223, 183, 108, 0.5);
+        }
 
         .highlight-red-large {
             color: #b32f2f; font-size: 15pt; font-weight: bold; text-align: center;
@@ -108,22 +129,39 @@
         <div class="game-stage">
             <div class="story-wrapper" id="storyWrapper"></div>
 
+            <!-- 中途選單 -->
             <div class="animated-container" id="directionContainer">
                 <button class="menu-button" id="btn-east" onclick="selectDirection('east', event)">轉向東側</button>
                 <button class="menu-button" id="btn-west" onclick="selectDirection('west', event)">轉向西側</button>
                 <button class="menu-button" id="btn-north" onclick="selectDirection('north', event)">轉向北側</button>
             </div>
 
+            <!-- 最終探索主選單 -->
             <div class="animated-container" id="exploreContainer">
                 
+                <!-- 東側解鎖：過去的命數 (12) -->
                 <div class="unlock-zone" id="eastUnlockZone" onclick="event.stopPropagation()">
                     <input type="text" class="code-input" id="pastCode" placeholder="過去的命數" autocomplete="off">
                     <button class="submit-btn" onclick="checkPastCode()">解鎖</button>
                 </div>
 
+                <!-- 西側解鎖：一見鍾情的魔咒 (LUST) -->
                 <div class="unlock-zone" id="westUnlockZone" onclick="event.stopPropagation()">
                     <input type="text" class="code-input" id="presentCode" placeholder="一見鍾情的魔咒" autocomplete="off" oninput="forceEnglishInput(this)">
                     <button class="submit-btn" onclick="checkPresentCode()">解鎖</button>
+                </div>
+
+                <!-- 北側解鎖：未來的宿命 (THE FOOL) -->
+                <div class="unlock-zone" id="northUnlockZone" onclick="event.stopPropagation()">
+                    <input type="text" class="code-input" id="futureCode" placeholder="未來的宿命" autocomplete="off" oninput="forceEnglishSpaceInput(this)">
+                    <button class="submit-btn" onclick="checkFutureCode()">解鎖</button>
+                </div>
+
+                <!-- 終極結局按鈕觸發區 -->
+                <div class="climax-action-wrapper" id="climaxActionZone" onclick="event.stopPropagation()">
+                    <button class="grand-final-btn" onclick="triggerGrandFinale()">
+                        拨動指針至 12:00
+                    </button>
                 </div>
                 
                 <button class="menu-button" id="explore-east-btn" onclick="handleExplore('east', event)">
@@ -150,7 +188,7 @@
             { text: "你站在那裡——不，你不確定自己「站」在什麼上面。你的腳下沒有地板，沒有石磚，只有一片深不見底的黑色，像凝固的深淵。<br>但你沒有墜落。<br>你只是……被允許停留在這裡。" },
             { text: "隔著黑色蕾絲，你剛才「看見」了宴會廳的光芒——金碧輝煌，燭火搖曳，眾神與賓客的輪廓如同剪影。那些影像模糊、顫抖、像浸在水中的油畫，但它們存在。<br>現在，你伸手摘下了眼罩。" },
             { text: "蕾絲從你的皮膚上滑落，像一層薄薄的死皮被揭開。那一刻，你幾乎以為自己會看見某種不該被凡人注視的神聖景象——眩目的、燒灼視網膜的、令你當場化為鹽柱的景象。<br>但什麼都沒有發生。" },
-            { text: "<div class='highlight-red-large'>開沒有光。沒有聲音。沒有人。</div>" }, 
+            { text: "<div class='highlight-red-large'>沒有光。沒有聲音。沒有人。</div>" }, 
             { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
             { text: "But舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
             { text: "這不再是宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
@@ -169,12 +207,12 @@
         const clockScript = [
             { text: "沒有神明。沒有賓客。沒有侍者。沒有音樂。<br>只有這三個方向，三道門，三種靜止的等待。" },
             { text: "你低下頭，看見自己手裡還握著那隻黑色蕾絲眼罩。它的絲帶纏繞在你的指間，像一條熟睡的蛇。銀線繡的字此刻正在微弱地發光，不是反射光──它在自行發光，像傷口癒合前那一圈若有若無的螢光。<br>你湊近，辨認那行古希臘文：<br><span class='highlight-gold-line'>「過去、現在、未來。三者不全，時針不動。」</span>" }, 
-            { text: "你踩起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的──像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針──三根指針，死死地卡在最頂端。" },
+            { text: "你抬起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的──像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針──三根指針，死死地卡在最頂端。" },
             { text: "<div class='highlight-time-huge' id='horrorClock'>23:59:59</div>", triggerClockChaos: true }, 
             { text: "秒針在顫抖。不是你眼睛的錯覺，而是它真的在顫抖，像一個溺水的人在最深的水底、在最絕望的時刻、最後一次伸出手臂。" },
-            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡──這個宴會廳──已經沒有任何活著的东西了。<br>或者說，從來沒有。" },
+            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡──這個宴會廳──已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
             { text: "宴會廳從頭到尾都只是一座墳墓。一座為時間建造的墳墓。而你是唯一的送葬者。" },
-            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了──或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音邊──", triggerFinalClimax: true } 
+            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了──或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。", triggerFinalClimax: true } 
         ];
 
         const finalClimaxScript = [
@@ -197,42 +235,73 @@
         const exploreContainer = document.getElementById("exploreContainer");
         const clickHint = document.getElementById("clickHint");
 
-        // 【核心優化】加載時從 localStorage 即時讀取已解鎖進度與探索狀態
+        // 【多軌交叉狀態鎖定引擎】加載時動態判定
         const hasPastDiscovered = localStorage.getItem("past_puzzles_discovered") === "true";
         const hasWestSolved = localStorage.getItem("west_puzzle_solved") === "true";
+        const hasFutureSolved = localStorage.getItem("future_puzzle_solved") === "true";
+
         const isPastSolved = localStorage.getItem("past_solved") === "true";
         const isWestSolved = localStorage.getItem("west_solved") === "true";
+        const isNorthSolved = localStorage.getItem("north_solved") === "true";
 
-        // 多軌混合狀態判定：只要有任一偏廳折返，就立刻滑入選單
-        if (hasPastDiscovered || hasWestSolved || isPastSolved || isWestSolved) {
+        if (hasPastDiscovered || hasWestSolved || hasFutureSolved || isPastSolved || isWestSolved || isNorthSolved) {
             currentScript = []; currentIndex = 0; isWaitingMenu = true; textAnimationLock = false;
             
             setTimeout(() => {
                 storyWrapper.innerHTML = ""; clickHint.style.display = "none"; exploreContainer.style.display = "block";
                 
-                // 動態判定：如果從東側回來且「尚未被正式解開」
+                // 開啟未完成的輸入面板
                 if (hasPastDiscovered && !isPastSolved) document.getElementById("eastUnlockZone").style.display = "block";
-                // 如果從西側回來且「尚未被正式解開」
                 if (hasWestSolved && !isWestSolved) document.getElementById("westUnlockZone").style.display = "block";
+                if (hasFutureSolved && !isNorthSolved) document.getElementById("northUnlockZone").style.display = "block";
                 
-                // 記憶恢復：如果之前就已經解開過，按鈕直接永久保持被解鎖狀態
-                if (isPastSolved) {
-                    document.getElementById("explore-east-btn").innerHTML = "前往東側：過去的命數已解";
-                    document.getElementById("explore-east-btn").disabled = true;
-                }
-                if (isWestSolved) {
-                    document.getElementById("explore-west-btn").innerHTML = "前往西側：一見鍾情的魔咒已解";
-                    document.getElementById("explore-west-btn").disabled = true;
-                }
-                
+                // 恢復已解鎖狀態的按鈕
+                updateButtonsDisplay();
                 startHorrorClock();
+                checkAllPuzzlesCompletion(); // 檢測是否迎來大結局
             }, 50);
         } else {
             window.onload = function() { initGame(); };
         }
 
+        // 強制英文元攔截器
         function forceEnglishInput(inputEl) {
             inputEl.value = inputEl.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+        }
+        function forceEnglishSpaceInput(inputEl) {
+            // 允許英文、底線及空格
+            inputEl.value = inputEl.value.replace(/[^a-zA-Z_\s]/g, '').toUpperCase();
+        }
+
+        function updateButtonsDisplay() {
+            if (localStorage.getItem("past_solved") === "true") {
+                document.getElementById("explore-east-btn").innerHTML = "前往東側：過去的命數已解";
+                document.getElementById("explore-east-btn").disabled = true;
+            }
+            if (localStorage.getItem("west_solved") === "true") {
+                document.getElementById("explore-west-btn").innerHTML = "前往西側：一見鍾情的魔咒已解";
+                document.getElementById("explore-west-btn").disabled = true;
+            }
+            if (localStorage.getItem("north_solved") === "true") {
+                document.getElementById("explore-north-btn").innerHTML = "前往北側：未來的宿命已解";
+                document.getElementById("explore-north-btn").disabled = true;
+            }
+        }
+
+        function checkAllPuzzlesCompletion() {
+            const p = localStorage.getItem("past_solved") === "true";
+            const w = localStorage.getItem("west_solved") === "true";
+            const n = localStorage.getItem("north_solved") === "true";
+            
+            if (p && w && n) {
+                // 三大謎題完美破除，隱藏所有輸入區，流暢浮現終極大結局按鈕
+                document.getElementById("eastUnlockZone").style.display = "none";
+                document.getElementById("westUnlockZone").style.display = "none";
+                document.getElementById("northUnlockZone").style.display = "none";
+                
+                const zone = document.getElementById("climaxActionZone");
+                zone.classList.add("active");
+            }
         }
 
         function initGame() {
@@ -245,7 +314,6 @@
         function gameContainerClicked() {
             if (textAnimationLock) return;
             if (isWaitingMenu && !isReadingDirectionText && !isReadingExploreText) return; 
-
             if (isReadingDirectionText) { returnToDirectionMenu(); return; }
             if (isReadingExploreText) { returnToExploreMenu(); return; }
             showNextParagraph();
@@ -308,38 +376,60 @@
             runChaos();
         }
 
-        // 東側驗證成功 ── 寫入永久記憶鎖定 past_solved
+        // 東側驗證 (12)
         function checkPastCode() {
             const inputVal = document.getElementById("pastCode").value.trim();
             if (inputVal === "12") {
                 localStorage.removeItem("past_puzzles_discovered");
-                localStorage.setItem("past_solved", "true"); // 永久解鎖標記
+                localStorage.setItem("past_solved", "true");
                 document.getElementById("eastUnlockZone").style.display = "none";
-                document.getElementById("explore-east-btn").innerHTML = "前往東側：過去的命數已解";
-                document.getElementById("explore-east-btn").disabled = true;
+                updateButtonsDisplay();
                 alert("過去的命數已解。");
+                checkAllPuzzlesCompletion();
             } else {
                 document.getElementById("pastCode").value = "";
                 alert("聖數未能相織。重新審視你從長廊帶回來的印記。");
             }
         }
 
-        // 西側驗證成功 ── 寫入永久記憶鎖定 west_solved
+        // 西側驗證 (LUST)
         function checkPresentCode() {
             const inputVal = document.getElementById("presentCode").value.trim().toUpperCase();
             if (inputVal === "LUST") {
                 localStorage.removeItem("west_puzzle_solved");
-                localStorage.setItem("west_solved", "true"); // 永久解鎖標記
+                localStorage.setItem("west_solved", "true");
                 document.getElementById("westUnlockZone").style.display = "none";
-                document.getElementById("explore-west-btn").innerHTML = "前往西側：一見鍾情的魔咒已解";
-                document.getElementById("explore-west-btn").disabled = true;
+                updateButtonsDisplay();
                 alert("一見鍾情的魔咒已解。你的手背微微一燙，彷彿有看不見的烙印正在癒合。");
+                checkAllPuzzlesCompletion();
             } else {
                 document.getElementById("presentCode").value = "";
-                alert("那不是她給你的咒語。提示：答案為四個字母的英文單字。");
+                alert("那不是她給你的咒語。");
             }
         }
 
+        // 北側驗證 (THE FOOL / THE_FOOL)
+        function checkFutureCode() {
+            const inputVal = document.getElementById("futureCode").value.trim().toUpperCase().replace(/_/g, ' ');
+            if (inputVal === "THE FOOL") {
+                localStorage.removeItem("future_puzzle_solved");
+                localStorage.setItem("north_solved", "true");
+                document.getElementById("northUnlockZone").style.display = "none";
+                updateButtonsDisplay();
+                alert("未來的宿命已解。");
+                checkAllPuzzlesCompletion();
+            } else {
+                document.getElementById("futureCode").value = "";
+                alert("那不是你從碎石中撿起的名字。");
+            }
+        }
+
+        // 終極結局點擊觸發
+        function triggerGrandFinale() {
+            alert("你伸出手，掌心抵住冰冷的指針。在心跳的第零秒，你猛地將它推向了12:00──轟鳴聲自虛空中爆發，時間的屍體開始崩解……（大結局情節開發中）");
+        }
+
+        // 路由分發器
         function handleExplore(action, event) {
             event.stopPropagation(); if (textAnimationLock) return;
             if (action === 'east') { localStorage.setItem("past_puzzles_discovered", "true"); window.location.href = "past1.html"; return; } 
