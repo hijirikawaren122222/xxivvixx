@@ -34,16 +34,28 @@
             z-index: 10;
         }
 
-        /* 遊戲單一舞台佈局：由上至下流暢排列，絕不重疊 */
+        /* 遊戲主要容器：擴展至 100% 寬高，確保點擊畫面的任何角落都能觸發點擊繼續 */
+        .game-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px 20px;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        /* 遊戲單一舞台佈局：由上至下流暢排列 */
         .game-stage {
             position: absolute;
-            top: 10%; /* 從上方優雅留白開始 */
+            top: 10%; 
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
             max-width: 700px;
             padding: 0 20px;
-            z-index: 20;
+            pointer-events: none; /* 讓舞台不阻擋容器的點擊事件 */
         }
 
         /* 文字故事區 */
@@ -73,6 +85,7 @@
             display: none; 
             text-align: center;
             animation: fadeInMenu 1.5s ease-in-out forwards;
+            pointer-events: auto; /* 恢復按鈕自身的點擊響應 */
         }
 
         @keyframes fadeInMenu {
@@ -96,18 +109,18 @@
             line-height: 1.6;
         }
 
-        .menu-button:hover {
+        .menu-button:hover:not(:disabled) {
             border-color: #dfb76c;
             color: #ffffff;
             background-color: rgba(223, 183, 108, 0.03);
             box-shadow: 0 0 12px rgba(223, 183, 108, 0.1);
         }
 
-        /* 按鈕變灰 */
+        /* 按鈕變灰樣式 */
         .menu-button:disabled {
-            background-color: rgba(15, 15, 15, 0.35);
+            background-color: rgba(15, 15, 15, 0.4);
             border-color: #16181b;
-            color: #3b4045;
+            color: #353a3e;
             cursor: default;
             text-shadow: none;
             box-shadow: none;
@@ -191,11 +204,14 @@
 
     <div class="ambient-hall"></div>
 
-    <div class="game-container" id="gameContainer" onclick="advanceText()">
+    <!-- 全螢幕點擊容器 -->
+    <div class="game-container" id="gameContainer" onclick="gameContainerClicked()">
         <div class="game-stage">
             
+            <!-- 文字故事區 -->
             <div class="story-wrapper" id="storyWrapper"></div>
 
+            <!-- 中途：極簡三方向按鈕區 -->
             <div class="animated-container" id="directionContainer">
                 <button class="menu-button" id="btn-east" onclick="selectDirection('east', event)">
                     轉向東側
@@ -208,6 +224,7 @@
                 </button>
             </div>
 
+            <!-- 結尾：獨立跳轉後的最終五大探索選單 -->
             <div class="animated-container" id="exploreContainer">
                 <button class="menu-button" onclick="handleExplore('east', event)">
                     前往東側：倒懸的雙蛇杖
@@ -245,20 +262,20 @@
             { text: "<div class='highlight-red-large'>沒有光。沒有聲音。沒有人。</div>" }, 
             { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。<br>但舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
             { text: "這不再是宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
-            { text: "你的呼吸聲變得異常清晰。不是因為安靜——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
+            { text: "你的呼吸聲變得異常清晰。不是因為安靜 Sus——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
             { text: "你環顧四周。" },
             { text: "宴會廳比你隔著眼罩看到的更大、更高、更深邃。牆壁不是石頭，而是某種黑色的、會吸光的物質。掛毯上的神話刺繡褪色到幾乎看不清，只剩下一些殘留的線條——一個被老鷹啄食的人，一個倒立飛行的少年，一隻睜開的眼睛。" },
             { text: "你轉動身體。視線掠過長桌、掠過空椅、掠過那些凝固的酒杯，最後落在三個方向。", triggerDirectionMenu: true } 
         ];
 
-        // 獨立的三方向描述文本
+        // 獨立的三方向描述文本（已刪除東側西側北側字樣）
         const directionTexts = {
             east: "一道深色的帷幔低垂，從天花板直落到地面，幾乎與牆壁融為一體。帷幔的材質不是絲綢也不是天鵝絨，而是某種你從未見過的、像乾涸血液凝結成的薄片。上面用銀線繡著一個徽記——倒懸的雙蛇杖。兩條蛇纏繞著一根帶翼的權杖，蛇眼鑲著小小的綠寶石，在黑暗中微微發亮。<br>帷幔下方的縫隙裡，透出一絲不自然的風。不是流動的空氣，而是一種「應該有風但沒有」的感覺。你的影子在那個方向變得模糊、扭曲，彷彿隨時會被某種力量扯離你的腳跟。<br>你感覺自己正在倒立。但你明明站著。",
-            west: "一片黑色的玫瑰花海鋪滿地磚。不是種在土裡，不是插在瓶中，而是像地毯一樣，整齊地、毫無生機地鋪滿了從長桌盡頭到牆角的所有空間。每一朵玫瑰都是全黑的——花瓣、花萼、荊棘，全部是一種顏色的黑，但它們的黑並不相同。有的像煤炭，有的像午夜，有的像深海最底層的淤泥。<br>它們不枯萎，也不凋謝。花瓣邊緣完整得不像真的，像被時間凍結在盛開的那一秒，永遠停在那一秒。<br>空氣中有葡萄發酵的甜膩氣味，混雜著某種更深的、令人暈眩的香氣——那是酒神的氣息，即使祂不在場，氣味也像幽靈一樣滯留。你深吸一口，立刻感到一陣輕微的頭暈，彷彿有看不見的手指在你的意識邊緣輕輕撥弄。",
-            north: "宴會廳的最深處，沒有帷幔，沒有花海，只有一扇門。一扇覆蓋著黑色冰霜的門。<br>那扇門沒有把手，沒有鎖眼，只有一整片烏黑的鐵面，上面凝結著一層薄薄的冰。但冰不是透明的——它是黑色的，像從冥河底部撈上來的結晶。寒氣不是從門散發出來的，而是像呼吸一樣——規律地、緩慢地吸入又吐出。<br>你靠近一步，那股寒氣就沿著你的腳踝往上爬，像一條看不見的蛇。門縫中滲出某種氣味：鐵鏽、潮濕、以及某種無法形容的、屬於死者才會認識的味道。那是冥河水的氣味。你從未聞過，但你的身體認識它 Sus——你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。"
+            west: "一片黑色的玫瑰花海鋪滿地磚。不是種在土裡，不是插在瓶中，而是像地毯一樣，整齊地、毫無生機地鋪滿了從長桌盡頭到牆角的所有空間。每一朵玫瑰都是全黑的——花瓣、花萼、荊棘，全部是一種顏色的黑，但它們的黑並不相同。有的像煤炭，有的像午夜，有的像深海最底層的淤泥。<br>它們不枯萎，也不凋謝。花瓣邊緣完整得不像真的，像被時間凍結在盛開的那一秒，永遠停在那一秒。<br>空氣中有葡萄發酵的甜膩氣味，混雜著某種更深的、令人暈眩的香氣 Sus——那是酒神的氣息，即使祂不在場，氣味也像幽靈一樣滯留。你深吸一口，立刻感到一陣輕微的頭暈，彷彿有看不見的手指在你的意識邊緣輕輕撥弄。",
+            north: "宴會廳的最深處，沒有帷幔，沒有花海，只有一扇門。一扇覆蓋著黑色冰霜的門。<br>那扇門沒有把手，沒有鎖眼，只有一整片烏黑的鐵面，上面凝結著一層薄薄的冰。但冰不是透明的——它是黑色的，像從冥河底部撈上來的結晶。寒氣不是從門散發出來的，而是像呼吸一樣——規律地、緩慢地吸入又吐出。<br>你靠近一步，那股寒氣就沿著你的腳踝往上爬，像一條看不見的蛇。門縫中滲出某種氣味：鐵鏽、潮濕、以及某種無法形容的、屬於死者才會認識的味道。那是冥河水的氣味。你從未聞過，但你的身體認識它——你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。"
         };
 
-        // 【第二階段】時鐘主線劇本（只走到走向第一個方向為止）
+        // 【第二階段】時鐘主線劇本
         const clockScript = [
             { text: "沒有神明。沒有賓客。沒有侍者。沒有音樂。<br>只有這三個方向，三道門，三種靜止的等待。" },
             { text: "你低下頭，看見自己手裡還握著那隻黑色蕾絲眼罩。它的絲帶纏繞在你的指間，像一條熟睡的蛇。銀線繡的字此刻正在微弱地發光，不是反射光——它在自行發光，像傷口癒合前那一圈若有若無的螢光。<br>你湊近，辨認那行古希臘文：<br><span class='highlight-gold-line'>「過去、現在、未來。三者不全，時針不動。」</span>" }, 
@@ -267,10 +284,10 @@
             { text: "秒針在顫抖。不是你眼睛的錯覺，而是它真的在顫抖，像一個溺水的人在最深的水底、在最絕望的時刻、最後一次伸出手臂。" },
             { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡——這個宴會廳——已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
             { text: "宴會廳從頭到尾都只是一座墳墓。一座為時間建造的墳墓。而你是唯一的送葬者。" },
-            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了——或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。<br>在這裡，沒有任何東西有聲音。", triggerFinalClimax: true } // 準備切向高潮文字
+            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了——或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。<br>在這裡，沒有任何東西有聲音。", triggerFinalClimax: true } 
         ];
 
-        // 【最終高潮文字】獨立存放，確保點擊後才切換到終極選項介面
+        // 【第三階段】最終高潮文本
         const finalClimaxScript = [
             { text: "只有心跳。<br>只有那根永遠顫抖的秒針。<br>只有三道門，三個謎題，以及一個你尚未理解的命運。", switchToExploreMenu: true }
         ];
@@ -280,8 +297,10 @@
         
         let textAnimationLock = false;
         let isWaitingMenu = false;
+        let isReadingDirectionText = false; // 新增：是否正在閱讀某一側的文案
         let clockTimer = null; 
         
+        // 自由探索方向統計
         let visitedDirections = { east: false, west: false, north: false };
 
         const storyWrapper = document.getElementById("storyWrapper");
@@ -298,14 +317,30 @@
             currentIndex = 0;
             textAnimationLock = false;
             isWaitingMenu = false;
+            isReadingDirectionText = false;
             if (clockTimer) clearTimeout(clockTimer);
             
             showNextParagraph();
         }
 
-        function advanceText() {
-            if (isWaitingMenu || textAnimationLock) return;
+        // 核心修正：全螢幕容器點擊管理器
+        function gameContainerClicked() {
+            // 如果此時有轉場鎖，或者正在等待選單按鈕被點擊，直接阻斷
+            if (textAnimationLock) return;
+            if (isWaitingMenu && !isReadingDirectionText) return; 
+
+            // 如果正在閱讀三方向的某一側文案，點擊畫面任意處就能回到三方向選單
+            if (isReadingDirectionText) {
+                returnToDirectionMenu();
+                return;
+            }
+
+            // 常規文字推進
             showNextParagraph();
+        }
+
+        function advanceText() {
+            // 保留原本的函式防止其他相容性報錯，主要邏輯已由 gameContainerClicked 接管
         }
 
         function showNextParagraph() {
@@ -343,7 +378,6 @@
                     }, 1200);
                 }
 
-                // 走向第一個方向結束，點擊後切入「只有心跳」高潮文字
                 if (lineData.triggerFinalClimax) {
                     setTimeout(() => {
                         currentScript = finalClimaxScript;
@@ -351,25 +385,25 @@
                     }, 1200);
                 }
 
-                // 「只有心跳」讀完了，清空文字並單獨浮現五個選項
                 if (lineData.switchToExploreMenu) {
                     setTimeout(() => {
                         isWaitingMenu = true;
-                        textAnimationLock = true; // 鎖死主畫面的大點擊
-                        storyWrapper.innerHTML = ""; // 乾淨清空文字區
-                        clickHint.style.display = "none"; // 隱藏點擊提示
-                        exploreContainer.style.display = "block"; // 只浮現五個純文字選項
+                        textAnimationLock = true; 
+                        storyWrapper.innerHTML = ""; 
+                        clickHint.style.display = "none"; 
+                        exploreContainer.style.display = "block"; 
                     }, 1200);
                 }
             }
         }
 
+        // 三方向按鈕點擊處
         function selectDirection(side, event) {
-            event.stopPropagation();
+            event.stopPropagation(); // 阻止冒泡
             if (textAnimationLock) return;
 
             textAnimationLock = true;
-            clickHint.style.display = "none"; 
+            directionContainer.style.display = "none"; // 吞噬隱藏三個按鈕
             storyWrapper.innerHTML = "";
             
             const p = document.createElement("div");
@@ -379,8 +413,24 @@
 
             setTimeout(() => { p.classList.add("visible"); }, 50);
 
+            // 標記該方向已讀過，並實時灰化按鈕
             visitedDirections[side] = true;
             document.getElementById(`btn-${side}`).disabled = true;
+
+            setTimeout(() => {
+                textAnimationLock = false;
+                isReadingDirectionText = true; // 開啟正在閱讀某一側文案的狀態
+                clickHint.innerHTML = "【 點擊任意處返回探索 】";
+                clickHint.style.display = "block";
+            }, 1200);
+        }
+
+        // 閱讀完該側文案後，點擊全螢幕任意處返回選單
+        function returnToDirectionMenu() {
+            textAnimationLock = true;
+            isReadingDirectionText = false;
+            clickHint.style.display = "none";
+            storyWrapper.innerHTML = "";
 
             const allVisited = visitedDirections.east && visitedDirections.west && visitedDirections.north;
 
@@ -388,15 +438,19 @@
                 textAnimationLock = false;
                 
                 if (allVisited) {
-                    directionContainer.style.display = "none";
+                    // 如果亂點亂選、所有方向都點過後，自動推進跳轉到下一個時鐘文案
                     isWaitingMenu = false;
                     clickHint.innerHTML = "【 點擊繼續 】";
                     clickHint.style.display = "block";
                     
                     currentScript = clockScript;
                     currentIndex = 0;
+                    showNextParagraph();
+                } else {
+                    // 尚未點完三個方向，重新浮現按鈕，等玩家繼續點擊其他
+                    directionContainer.style.display = "block";
                 }
-            }, 1200);
+            }, 400);
         }
 
         // 詛咒不穩定隨機跳動時鐘
