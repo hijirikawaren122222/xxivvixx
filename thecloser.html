@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ - 靜止的殿堂</title>
+    <title>Κήρ</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -55,9 +55,9 @@
         .menu-button span { display: block; font-size: 9.5pt; color: #6c7279; margin-top: 5px; letter-spacing: 1px; }
         .menu-button:disabled span { color: #24272a; }
 
-        /* 密碼輸入框專屬樣式 */
+        /* 密碼輸入框區塊 */
         .unlock-zone {
-            display: none; width: 100%; margin-bottom: 16px; animation: fadeInMenu 1s ease-in-out;
+            display: none; width: 100%; margin-bottom: 20px; animation: fadeInMenu 1s ease-in-out;
         }
         .code-input {
             background-color: #0b0d10; border: 1px solid #343a40; color: #dfb76c;
@@ -101,9 +101,12 @@
     </style>
 </head>
 <body>
+
     <div class="ambient-hall"></div>
+
     <div class="game-container" id="gameContainer" onclick="gameContainerClicked()">
         <div class="game-stage">
+            
             <div class="story-wrapper" id="storyWrapper"></div>
 
             <div class="animated-container" id="directionContainer">
@@ -117,22 +120,25 @@
                     <input type="text" class="code-input" id="pastCode" placeholder="過去的命數" autocomplete="off">
                     <button class="submit-btn" onclick="checkPastCode()">解鎖</button>
                 </div>
+                
                 <button class="menu-button" id="explore-east-btn" onclick="handleExplore('east', event)">
                     前往東側：倒懸的雙蛇杖
                     <span>帷幔後方，重力顛倒的長廊在等待。赫耳墨斯在那裡。或者不在。你只能自己去確認。</span>
                 </button>
-                <button class="menu-button" onclick="handleExplore('west', event)">
+                <button class="menu-button" id="explore-west-btn" onclick="handleExplore('west', event)">
                     前往西側：黑玫瑰與酒香
                     <span>花海盡頭，七個金樽排列成陣。狄奧尼索斯的氣息仍瀰漫在空氣中，甜膩而危險。</span>
                 </button>
-                <button class="menu-button" onclick="handleExplore('north', event)">
+                <button class="menu-button" id="explore-north-btn" onclick="handleExplore('north', event)">
                     前往北側：冰霜覆蓋的冥界之門
                     <span>門後沒有聲音，只有寒氣。阿基里斯的威壓像一座山，壓在門縫的另一側。</span>
                 </button>
                 <button class="menu-button" onclick="handleExplore('mask', event)">重新戴上眼罩</button>
                 <button class="menu-button" onclick="handleExplore('clock', event)">凝視時鐘</button>
             </div>
+
         </div>
+        
         <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
     </div>
 
@@ -143,7 +149,7 @@
             { text: "蕾絲從你的皮膚上滑落，像一層薄薄的死皮被揭開。那一刻，你幾乎以為自己會看見某種不該被凡人注視的神聖景象——眩目的、燒灼視網膜的、令你當場化為鹽柱的景象。<br>但什麼都沒有發生。" },
             { text: "<div class='highlight-red-large'>沒有光。沒有聲音。沒有人。</div>" }, 
             { text: "你眨了眨眼。宴會廳還在，但跟你隔著眼罩時「看見」的完全不一樣。<br>長桌、金杯、銀盤、懸浮在半空的酒滴——它們都在。燭台立在每個轉角，燭火凝固成琥珀色的冰晶。水晶吊燈掛在天花板上，折射出不存在的光譜。" },
-            { text: "但舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
+            { text: "But舉杯的賓客消失了。低語的眾神不見了。連他們靜止不動的身影都像被某隻看不見的手擦拭乾淨。<br>剩下的是空蕩蕩的座位、空蕩蕩的光線、空蕩蕩的回聲——儘管沒有聲音，你卻感覺得到「回聲」的存在，那是一種記憶層面的噪音，像有人在很遠的地方反覆說著你聽不懂的話。" },
             { text: "這不再是宴會廳。<br>這是宴會廳的<span class='highlight-red'>屍體</span>。" }, 
             { text: "你的呼吸聲變得異常清晰。不是因為安靜——安靜是另一種東西。這裡的寂靜有質量，像一塊看不見的絨布，蓋在你的口鼻上，悶熱、沉重、帶著舊布料的霉味。每一次吸氣，你都感覺那塊絨布往肺裡陷得更深。<br>你試著說話。<br>喉嚨發出聲音——一個無意義的音節，像是「啊」，或者「喂」。但聲音剛離開嘴唇就被吞噬了。這裡的空氣不允許任何波動存在。它像凍結的湖面，聲音踩上去，連裂痕都留不下。<br>你只能聽見自己的心跳。<br>咚、咚、咚……緩慢、規律、固執，像有人在用拳頭敲一扇永遠不會打開的門。那扇門就在你的胸腔裡，而你找不到鑰匙。" },
             { text: "你環顧四周。" },
@@ -152,7 +158,7 @@
         ];
 
         const directionTexts = {
-            east: "一道深色的帷幔低垂，從天花板直落到地面，幾乎與牆壁融為一體。帷幔的材質不是絲綢也不是天鵝絨，而是某種你從未見過的、像乾涸血液凝結成的薄片。上面用銀線繡著一個徽記──倒懸的雙蛇杖。兩條蛇纏繞著一根帶翼的權杖，蛇眼鑲著小小的綠寶石，在黑暗中微微發亮。<br>帷幔下方的縫隙裡，透出一絲不自然的風。不是流動的空氣，而是一種「應該有風但沒有」的感覺。你的影子在那個方向變得模糊、扭曲，彷彿隨時會被某種力量扯離你的腳跟。<br>你感覺自己正在倒立。但你明明站著。",
+            east: "一道深色的帷幔低垂，從天花板直落到地面，幾乎與牆壁融為一體。帷幔的材質不是絲綢也不是天鵝絨，而是某種你從未見過的、像乾涸血液凝結成的薄片。上面用銀線繡著一個徽記──倒懸的雙蛇杖。兩條蛇纏繞著一根帶翼的權杖，蛇眼鑲著小小的綠寶信，在黑暗中微微發亮。<br>帷幔下方的縫隙裡，透出一絲不自然的風。不是流動的空氣，而是一種「應該有風但沒有」的感覺。你的影子在那個方向變得模糊、扭曲，彷彿隨時會被某種力量扯離你的腳跟。<br>你感覺自己正在倒立。但你明明站著。",
             west: "一片黑色的玫瑰花海鋪滿地磚。不是種在土裡，不是插在瓶中，而是像地毯一樣，整齊地、毫無生機地鋪滿了從長桌盡頭到牆角的所有空間。每一朵玫瑰都是全黑的──花瓣、花萼、荊棘，全部是一種顏色的黑，但它們的黑並不相同。有的像煤炭，有的像午夜，有的像深海最底層的淤泥。<br>它們不枯萎，也不凋謝。花瓣邊緣完整得不像真的，像被時間凍結在盛開的那一秒，永遠停在那一秒。<br>空氣中有葡萄發酵的甜膩氣味，混雜著某種更深的、令人暈眩的香氣──那是酒神的氣息，即使祂不在場，氣味也像幽靈一樣滯留。你深吸一口，立刻感到一陣輕微的頭暈，彷彿有看不見的手指在你的意識邊緣輕輕撥弄。",
             north: "宴會廳的最深處，沒有帷幔，沒有花海，只有一扇門。一扇覆蓋著黑色冰霜的門。<br>那扇門沒有把手，沒有鎖眼，只有一整片烏黑的鐵面，上面凝結著一層薄薄的冰。但冰不是透明的──它是黑色的，像從冥河底部撈上來的結晶。寒氣不是從門散發出來的，而是像呼吸一樣──規律地、緩慢地吸入又吐出。<br>你靠近一步，那股寒氣就沿著你的腳踝往上爬，像一條看不見的蛇。門縫中滲出某種氣味：鐵鏽、潮濕、以及某種無法形容的、屬於死者才會認識的味道。那是冥河水的氣味。你從未聞過，但你的身體認識它──你的骨髓、你的牙根、你最深處的某個細胞在顫抖，喊著一個你聽不懂的警告。"
         };
@@ -163,9 +169,9 @@
             { text: "你抬起頭，終於看向大廳正中央。<br>那裡有一座時鐘。<br>純金打造，比人還高，鑲嵌著你不知道名字的寶石。它的鐘面不是白色，而是黑色的──像一面打磨過的黑色鏡子，映出你的倒影，但不是現在的你。鏡中的你戴著眼罩，站在另一個宴會廳裡，周圍擠滿了靜止的賓客。<br>而時針──三根指針，死死地卡在最頂端。" },
             { text: "<div class='highlight-time-huge' id='horrorClock'>23:59:59</div>", triggerClockChaos: true }, 
             { text: "秒針在顫抖。不是你眼睛的錯覺，而是它真的在顫抖，像一個溺水的人在最深的水底、在最絕望的時刻、最後一次伸出手臂。" },
-            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡──這個宴會廳──已經沒有活著的東西了。<br>或者說，從來沒有。" },
+            { text: "你明白了。<br>你必須走入這三道門。沒有誰來指引你，沒有誰來阻擋你。因為這裡──這個宴會廳──已經沒有任何活著的東西了。<br>或者說，從來沒有。" },
             { text: "宴會廳從頭到尾都只是一座墳墓。一座為時間建造的墳墓。而你是唯一的送葬者。" },
-            { text: "防你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了──或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。", triggerFinalClimax: true } 
+            { text: "你把眼罩繫回腰間。它的絲帶打了一個簡單的結，貼著你的髖骨，冰涼但安靜。它現在是你的護身符了──或者你的枷鎖。你還不確定。<br>但你開始走向第一個方向。你的腳步沒有聲音。", triggerFinalClimax: true } 
         ];
 
         const finalClimaxScript = [
@@ -173,14 +179,14 @@
         ];
 
         const exploreTexts = {
-            mask: "當你重新戴上眼罩，黑暗再次降臨。但這開次，你看見了幻覺──賓客們的身影短暫地浮現，像溺水者的記憶。你可能會瞥見某些線索，但它們稍縱即逝。",
+            mask: "當你重新戴上眼罩，黑暗再次降臨。但這一次，你看見了幻覺──賓客們的身影短暫地浮現，像溺水者的記憶。你可能會瞥見某些線索，但它們稍縱即逝。",
             clock: "純金時鐘靜靜佇立。指針仍然卡在23:59:59。秒針仍然在顫抖。你感覺它在等你。<br>黑色的鏡面鐘面裡，戴著蕾絲眼罩的你正冷冷地與你對視。秒針震顫的頻率，正一擊一擊，與你胸腔內固執的心跳完美同步。"
         };
 
         let currentScript = mainScript; let currentIndex = 0;
         let textAnimationLock = false; let isWaitingMenu = false;
         let isReadingDirectionText = false; let isReadingExploreText = false; 
-        let clockTimer = null; let pastUnlocked = false;
+        let clockTimer = null; 
         let visitedDirections = { east: false, west: false, north: false };
 
         const storyWrapper = document.getElementById("storyWrapper");
@@ -188,19 +194,24 @@
         const exploreContainer = document.getElementById("exploreContainer");
         const clickHint = document.getElementById("clickHint");
 
-        // 偵測是否是從 past 密室解謎回來的
-        window.onload = function() {
-            if (localStorage.getItem("past_puzzles_discovered") === "true") {
-                // 如果探索過 past 密室，直接進入解密狀態，開啟輸入框
-                currentScript = []; storyWrapper.innerHTML = "";
-                isWaitingMenu = true; clickHint.style.display = "none";
+        // 核心安全策略：頂層直接攔截 localStorage，防堵非同步生命週期死鎖
+        if (localStorage.getItem("past_puzzles_discovered") === "true") {
+            currentScript = []; 
+            currentIndex = 0;
+            isWaitingMenu = true; 
+            textAnimationLock = false; // 萬用鑰匙：強制拔除轉場點擊鎖
+            
+            // 由於使用 DOM 元素生成需要確保節點加載，此處使用延遲最穩健
+            setTimeout(() => {
+                storyWrapper.innerHTML = ""; 
+                clickHint.style.display = "none"; 
                 exploreContainer.style.display = "block";
                 document.getElementById("eastUnlockZone").style.display = "block";
                 startHorrorClock();
-            } else {
-                initGame();
-            }
-        };
+            }, 50);
+        } else {
+            window.onload = function() { initGame(); };
+        }
 
         function initGame() {
             storyWrapper.innerHTML = ""; directionContainer.style.display = "none"; exploreContainer.style.display = "none";
@@ -211,7 +222,10 @@
 
         function gameContainerClicked() {
             if (textAnimationLock) return;
+            
+            // 重要修正：如果正停留在五大按鈕介面，全螢幕點擊推進直接關閉（防止點擊空白處把畫面洗掉）
             if (isWaitingMenu && !isReadingDirectionText && !isReadingExploreText) return; 
+
             if (isReadingDirectionText) { returnToDirectionMenu(); return; }
             if (isReadingExploreText) { returnToExploreMenu(); return; }
             showNextParagraph();
@@ -277,7 +291,8 @@
         function checkPastCode() {
             const inputVal = document.getElementById("pastCode").value.trim();
             if (inputVal === "12") {
-                pastUnlocked = true;
+                // 解鎖成功，清除偵測狀態
+                localStorage.removeItem("past_puzzles_discovered");
                 document.getElementById("eastUnlockZone").style.display = "none";
                 document.getElementById("explore-east-btn").innerHTML = "前往東側：過去的命數已解";
                 document.getElementById("explore-east-btn").disabled = true;
