@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第四間</title>
+    <title>🧭 東側：過去之廳 — 第四間</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
@@ -28,22 +28,20 @@
         }
         .story-paragraph.visible { opacity: 1; }
         
-        /* 核心設計：平常無法選取，滑鼠懸停時自動亮起並解鎖複製權限 */
         .highlight-blood-selectable {
-            color: #b32f2f; 
-            text-shadow: 0 0 8px rgba(179, 47, 47, 0.5);
-            font-weight: bold; 
-            display: inline-block;
-            transition: all 0.3s ease;
-            pointer-events: auto; /* 允許捕捉滑鼠事件 */
-            -webkit-user-select: none; user-select: none;
+            color: #b32f2f; text-shadow: 0 0 8px rgba(179, 47, 47, 0.5);
+            font-weight: bold; display: inline-block; transition: all 0.3s ease;
+            pointer-events: auto; -webkit-user-select: none; user-select: none;
         }
         .highlight-blood-selectable:hover {
-            color: #ff7675;
-            text-shadow: 0 0 15px #ff7675, 0 0 25px rgba(255, 118, 117, 0.6);
-            cursor: text; /* 指針變成文字選取型 */
-            -webkit-user-select: text; user-select: text; /* 懸停時開放複製 */
+            color: #ff7675; text-shadow: 0 0 15px #ff7675, 0 0 25px rgba(255, 118, 117, 0.6);
+            cursor: text; -webkit-user-select: text; user-select: text;
         }
+        .small-hint-text { 
+            font-size: 10pt; color: #555; letter-spacing: 1px; text-align: center; 
+            margin-top: 30px; opacity: 0; transition: opacity 1.2s ease-in-out;
+        }
+        .small-hint-text.visible { opacity: 1; }
 
         .click-hint {
             position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
@@ -60,12 +58,15 @@
     </div>
 
     <script>
+        // 標記已拜訪過第四密室
+        localStorage.setItem("past_room_4_visited", "true");
+
         const scriptData = [
             { text: "你改寫了路徑，來到第四間密室。虛空震盪，一道門在你面前浮現。" },
             { text: "你推開它。" },
             { text: "空氣裡塞滿了焦灼與鐵鏽的氣味。一隻青銅色的老鷹靜止在半空，鳥喙正嵌進一個人的側腹。那個人被鎖鏈捆縛，赤裸的上身佈滿燒傷與撕裂的傷痕——而肝臟正在緩慢地、無法停止地重生。<br>他是普羅米修斯。" },
             { text: "他無法開口。但他傷口流出的血沒有滴落，而是逆流而上，在牆上凝結成一行古希臘文字：<br>「你尋找的是那場嫉妒的初始。火種從這裡墜落，光從這裡被偷走。這間密室藏著第一個聖數——<span class='highlight-blood-selectable' onclick='event.stopPropagation()'>Δέλτα</span>。記住它。」" },
-            { text: "你看著那個字母。血字漸漸褪去。老鷹沒有繼續啄食。一切回到靜止。你沒有東西可以帶走，除了這個數字。", isEnd: true }
+            { text: "你看著那個字母。血字漸漸褪去。老鷹沒有繼續啄食。一切回到靜止。你沒有東西可以帶走，除了這個名字。", isEnd: true }
         ];
 
         let currentIndex = 0; let textAnimationLock = false;
@@ -84,7 +85,17 @@
                 setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
 
                 if (line.isEnd) {
-                    setTimeout(() => { clickHint.style.display = "none"; }, 1200);
+                    setTimeout(() => {
+                        clickHint.style.display = "none";
+                        // 智慧判斷：如果第 7 密室也去過了，說明這是第二個密室，拋出回大廳提示
+                        if (localStorage.getItem("past_room_7_visited") === "true") {
+                            const hintDiv = document.createElement("div");
+                            hintDiv.className = "small-hint-text";
+                            hintDiv.innerHTML = "「沿著你來時的路徑折返，回到最初的宴會廳。」";
+                            storyWrapper.appendChild(hintDiv);
+                            setTimeout(() => { hintDiv.classList.add("visible"); }, 50);
+                        }
+                    }, 1200);
                 }
             }
         }
