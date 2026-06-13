@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍇 西側：現在之廳 — 黑玫瑰</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0a080d; color: #dcdcdc; /* 黑玫瑰深紫底 */
+            font-family: 'Times New Roman', 'Noto Serif TC', serif;
+            overflow: hidden; -webkit-user-select: none; user-select: none;
+        }
+        /* 西側神秘氛圍：微弱的酒紫與黑玫瑰殘影 */
+        .ambient-west {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(138, 43, 226, 0.03) 0%, rgba(10, 8, 13, 0) 75%);
+            pointer-events: none; z-index: 10;
+        }
+        .game-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px 20px; cursor: pointer; z-index: 20;
+        }
+        .game-stage { position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none; }
+        .story-paragraph {
+            font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
+            transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
+        }
+        .story-paragraph.visible { opacity: 1; }
+        .click-hint {
+            position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
+            font-size: 10pt; color: #494550; letter-spacing: 4px; animation: pulse 2.5s infinite; pointer-events: none;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+    <div class="ambient-west"></div>
+    <div class="game-container" onclick="gameContainerClicked()">
+        <div class="game-stage">
+            <div id="storyWrapper"></div>
+        </div>
+        <div class="click-hint" id="clickHint">【 點擊繼續 】</div>
+    </div>
+
+    <script>
+        const scriptData = [
+            { text: "你走向西側。黑色玫瑰在你腳下無聲無息地裂開，又合攏，像一雙雙閉合的眼瞼。荊棘輕輕刮過你的腳踝，沒有痛，只有一種被記住的感覺。" },
+            { text: "空氣變得越來越黏稠。葡萄發酵的甜膩氣味像看不見的絲線，纏繞你的手腕、你的喉嚨、你的太陽穴。你感覺每一次呼吸都在吸入某種古老的醉意。" },
+            { text: "花海的盡頭是吧檯。狄奧尼索斯站在那裡，一手持酒瓶，瓶口傾斜，一道酒液懸在半空，像一條被凍結的琥珀色河流。他的嘴角掛著一個微笑——不嘲諷，不善意，更像是某種對人類愚蠢的、耐心的憐憫。" },
+            { text: "在他身後幾步遠的地方，站著那個女人。她端著一隻空杯，凍結在時空中。她的髮絲靜止，裙襬的皺褶像被冰封的漣漪。她的嘴唇微張，像正在說一個永遠無法完成的音節。" },
+            { text: "你試圖靠近她，卻發現有一道看不見的界線將你擋住。不是牆，不是鎖，而是一種「不應該」——仿佛你們之間隔著一層透明的、由時間本身編織的幕。" },
+            { text: "吧檯的邊緣，刻著一行細小的文字。你蹲下來讀：<br>「她在等待一個詞語。詞語不在這裡。你必須同時看見兩張圖，才能撈起四個字母。重新排列成一個古老的詞，獻給她。」" },
+            { text: "你環顧四周。這間偏廳沒有其他出口，只有一條狹窄的走廊。走廊的牆上掛著兩塊門牌：一塊寫著第一間，另一塊寫著第二間。" },
+            { text: "你明白，你必須同時打開這兩扇門——不是先後，而是同時。<br><br>改寫你的路徑，分別進入第一間與第二間。然後，讓它們並列。", isEnd: true }
+        ];
+
+        let currentIndex = 0; let textAnimationLock = false;
+        const storyWrapper = document.getElementById("storyWrapper");
+        const clickHint = document.getElementById("clickHint");
+
+        function gameContainerClicked() {
+            if (textAnimationLock) return;
+            if (currentIndex < scriptData.length) {
+                const line = scriptData[currentIndex];
+                textAnimationLock = true; clickHint.style.opacity = "0.1"; storyWrapper.innerHTML = "";
+                const p = document.createElement("div"); p.className = "story-paragraph"; p.innerHTML = line.text;
+                storyWrapper.appendChild(p);
+                setTimeout(() => { p.classList.add("visible"); }, 50);
+                currentIndex++;
+                setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
+
+                if (line.isEnd) {
+                    setTimeout(() => { clickHint.style.display = "none"; }, 1200);
+                }
+            }
+        }
+        window.onload = gameContainerClicked;
+    </script>
+</body>
+</html>
