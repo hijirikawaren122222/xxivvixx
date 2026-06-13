@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧭 東側：過去之廳 — 第七間</title>
+    <title>第七間</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body, html {
@@ -27,10 +27,24 @@
             transition: opacity 1.2s ease-in-out; text-shadow: 0 0 10px rgba(0,0,0,0.9);
         }
         .story-paragraph.visible { opacity: 1; }
-        .highlight-gold-remnant {
-            color: #dfb76c; text-shadow: 0 0 6px rgba(223, 183, 108, 0.5);
-            display: block; margin: 15px 0; line-height: 2;
+        
+        /* 核心設計：平常無法選取，滑鼠懸停時自動亮起並解鎖複製權限 */
+        .highlight-gold-selectable {
+            color: #dfb76c; 
+            text-shadow: 0 0 6px rgba(223, 183, 108, 0.5);
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            pointer-events: auto; /* 允許捕捉滑鼠事件 */
+            -webkit-user-select: none; user-select: none;
         }
+        .highlight-gold-selectable:hover {
+            color: #ffeaa7;
+            text-shadow: 0 0 15px #ffeaa7, 0 0 25px rgba(255, 234, 167, 0.6);
+            cursor: text; /* 指針變成文字選取型 */
+            -webkit-user-select: text; user-select: text; /* 懸停時開放複製 */
+        }
+
         .small-hint-text { font-size: 10pt; color: #555; letter-spacing: 1px; text-align: center; margin-top: 30px; }
         .click-hint {
             position: absolute; bottom: 40px; left: 0; width: 100%; text-align: center;
@@ -50,7 +64,7 @@
         const scriptData = [
             { text: "你改寫了路徑，來到第七間密室。" },
             { text: "這裡沒有牆，沒有地板，只有一片無邊無際的灰色虛空。虛空的正中央，懸浮著一封打開的邀請函——正是你在暴雨夜收到的那一封。它像一隻折翼的鳥，停留在半空中，散發著微弱的金色餘燼。" },
-            { text: "邀請函的內頁浮現出一段威嚴的字跡，筆畫粗獷、帶著雷電灼燒的痕跡：<br><span class='highlight-gold-remnant'>「奧林帕斯的主宰與那隻逆天改命的半神，將在黃道的終點融為灰燼。這間密室藏著第二個聖數——Ἰῶτα Βῆτα。記住它。」</span>" },
+            { text: "邀請函的內頁浮現出一段威嚴的字跡，筆畫粗獷、帶著雷電灼燒的痕跡：<br>「奧林帕斯的主宰與那隻逆天改命的半神，將在黃道的終點融為灰燼。這間密室藏著第二個聖數——<span class='highlight-gold-selectable' onclick='event.stopPropagation()'>Ἰῶτα Βῆτα</span>。記住它。」" },
             { text: "你看著那兩個希臘字母。邀請函的餘燼開始熄滅。你只能帶著這兩個字母離開。<br><div class='small-hint-text'>「沿著你來時的路徑折返，回到最初的長廊。」</div>", isEnd: true }
         ];
 
@@ -70,10 +84,7 @@
                 setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
 
                 if (line.isEnd) {
-                    setTimeout(() => {
-                        clickHint.innerHTML = "【 第二個聖數已獲取。請改寫路徑返回 thecloser.html 解開過去的命數 】";
-                        clickHint.style.color = "#dfb76c";
-                    }, 1200);
+                    setTimeout(() => { clickHint.style.display = "none"; }, 1200);
                 }
             }
         }
