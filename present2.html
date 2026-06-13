@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍇 西側：現在之廳 — 第二間</title>
+    <title>🍇 西側：現在之廳 — 第二間密室</title>
+    <!-- 引入神祕古典的 Google 字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -22,7 +23,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 40px 20px; cursor: pointer; z-index: 20;
         }
-        .game-stage { position: block; max-width: 700px; margin: 80px auto 0 auto; pointer-events: none; }
+        .game-stage { position: block; max-width: 700px; margin: 100px auto 0 auto; pointer-events: none; }
         .story-wrapper { width: 100%; margin-bottom: 20px; }
         .story-paragraph {
             font-size: 13pt; line-height: 1.9; letter-spacing: 2px; opacity: 0;
@@ -30,26 +31,26 @@
         }
         .story-paragraph.visible { opacity: 1; }
 
-        /* 10x10 網格遮罩外觀 */
+        /* 10x10 網格遮罩樣式 */
         .grid-container {
-            margin: 20px auto; display: inline-block; pointer-events: auto;
+            display: none; margin: 20px auto; pointer-events: auto;
             border-collapse: collapse; font-family: monospace; font-size: 14pt; letter-spacing: 4px;
+            animation: fadeInPanel 1s ease-in-out forwards;
         }
         .grid-cell { padding: 4px 8px; color: #494550; text-align: center; }
-        /* 讓 O 字母產生神秘發光 */
         .grid-cell.highlight-o {
             color: #9b59b6; text-shadow: 0 0 8px #9b59b6; font-weight: bold;
             pointer-events: auto; -webkit-user-select: none; user-select: none;
         }
         .grid-cell.highlight-o:hover {
             color: #ffeaa7; text-shadow: 0 0 12px #ffeaa7; cursor: text;
-            -webkit-user-select: text; user-select: text; /* 開放選取 */
+            -webkit-user-select: text; user-select: text;
         }
 
-        /* 輸入框交互控制面板 */
+        /* 輸入框交互面板 */
         .input-panel {
             display: none; width: 100%; margin: 20px auto; text-align: center; pointer-events: auto;
-            animation: fadeInPanel 1.5s ease-in-out forwards;
+            animation: fadeInPanel 1.2s ease-in-out forwards;
         }
         @keyframes fadeInPanel { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .text-input {
@@ -65,7 +66,7 @@
         }
         .submit-btn:hover { border-color: #9b59b6; color: #fff; }
 
-        /* 後半段跳轉按鈕 */
+        /* 最終離開按鈕 */
         .return-hall-btn {
             display: none; background: none; border: 1px solid #dfb76c; color: #dfb76c;
             padding: 15px 30px; margin: 30px auto 0 auto; font-size: 11pt; letter-spacing: 2px;
@@ -73,7 +74,7 @@
         }
         .return-hall-btn:hover { background-color: #dfb76c; color: #000; box-shadow: 0 0 15px rgba(223,183,108,0.3); }
 
-        /* 關鍵字：欲望發光樣式 */
+        /* 關鍵字：欲望雙重複雜脈衝發光 */
         .highlight-desire-glow {
             color: #b32f2f; font-weight: bold; display: inline-block;
             text-shadow: 0 0 10px #b32f2f, 0 0 25px rgba(138, 43, 226, 0.8);
@@ -100,16 +101,19 @@
         <div class="game-stage">
             <div class="story-wrapper" id="storyWrapper"></div>
             
+            <!-- 10x10 O型網格遮罩 -->
             <div style="text-align: center;">
                 <table class="grid-container" id="maskGrid" onclick="event.stopPropagation()"></table>
             </div>
 
+            <!-- 解謎密碼輸入面板 -->
             <div class="input-panel" id="inputPanel" onclick="event.stopPropagation()">
                 <input type="text" class="text-input" id="wordInput" placeholder="獻上你拼出的詞語" autocomplete="off">
                 <button class="submit-btn" onclick="checkAnswer()">獻上</button>
                 <div id="errorMsg" style="color: #b32f2f; margin-top: 15px; font-size: 11pt; display: none;">那不是她等待的詞語。再試一次。</div>
             </div>
 
+            <!-- 後續回歸大廳按鈕 -->
             <div style="text-align: center;">
                 <button class="return-hall-btn" id="returnHallBtn" onclick="navigateToCloser(event)">
                     回到最初的宴會廳
@@ -120,16 +124,15 @@
     </div>
 
     <script>
-        // 前半段解謎劇本
+        // 【第一階段】解謎大綱劇本
         const puzzleScript = [
             { text: "你改寫了路徑，來到第二間密室。" },
             { text: "女人站在這裡，端著空杯，凍結在時空中。你走近她，近到能看見她睫毛的陰影落在臉頰上的形狀。她的嘴唇微張，像一個被暫停的音節。你忽然有一種衝動——想伸手觸碰她，想讓她醒來。但你不能。那條看不見的界線在這裡更厚了，厚到像一面玻璃。" },
-            { text: "她面前的桌面上，鋪著一張由「X」與「O」組成的十乘十網格。那些 O 像零星睜開的眼睛，散落在黑暗中。你仔細數了數，一共四個 O。" },
-            { text: "網格上方，浮現一行銀色的小字，字跡纖細，像女人的手寫：<br>「將第一間密室的字母矩陣與這張網重疊。讀出每一處『O』所觸及的字母。然後——將它們重新排列。那是她等待的祭品。」" },
-            { text: "你回頭看了一眼第一間密室的矩陣，記下那些位置上的字母。它們是：W、I、N、E。但順序是打亂的——E、W、N、I，或者別的組合。你試著把它們重新排列。<br><br>W-I-N-E。WINE。<br><br>酒。", triggerInputMenu: true }
+            { text: "她面前的桌面上，鋪著一張由「X」與「O」組成的十乘十網格。那些 O 像零星睜開的眼睛，散落在黑暗中。你仔細數了數，一共四個 O。<br><br>網格上方，浮現一行銀色的小字，字跡纖細，像女人的手寫：<br>「將第一間密室的字母矩陣與這張網重疊。讀出每一處『O』所觸及的字母。然後——將它們重新排列。那是她等待的祭品。」" },
+            { text: "你回頭看了一眼第一間密室的矩陣，記下那些位置上的字母。它們是：W、I、N、E。但順序是打亂的——E、W、N、I，或者別的組合。你試著把它們重新排列。<br><br>W-I-N-E。WINE。<br><br>酒。<br><br>網格下方，有一個凹陷的凹槽，邊緣鑲著黑色的玫瑰花瓣。凹槽旁邊沒有標籤，只有一行幾乎看不見的細字：「獻上你拼出的詞語」。<br>你伸出手，手指懸停在凹槽上方。你知道，這是你與她之間第一個聯繫。", triggerPuzzleInterface: true }
         ];
 
-        // 正確解鎖後的劇情劇本
+        // 【第二階段】正確解開謎題後的「甦醒與愛意」劇情文本
         const storyScript = [
             { text: "那一瞬間，女人手中的酒杯發出了輕微的震動。不是聲音，而是你看見酒液表面出現了漣漪——在這個一切靜止的世界裡，漣漪不應該存在。它們一圈一圈地擴散，像有人在很遠的地方投下了一顆石子。" },
             { text: "她的睫毛顫抖了。" },
@@ -177,27 +180,32 @@
                 currentIndex++;
                 setTimeout(() => { textAnimationLock = false; clickHint.style.opacity = "1"; }, 1200);
 
-                if (lineData.triggerInputMenu) {
+                // 解謎文字播完了，浮現解謎對照網格與密碼輸入框
+                if (lineData.triggerPuzzleInterface) {
                     setTimeout(() => {
-                        isWaitingMenu = true; clickHint.style.display = "none";
-                        renderMaskGrid(); // 展現 10x10 O型遮罩網格
+                        isWaitingMenu = true; 
+                        clickHint.style.display = "none";
+                        renderMaskGrid(); 
+                        maskGrid.style.display = "table";
                         inputPanel.style.display = "block";
                     }, 1200);
                 }
 
+                // 後半段高潮劇本播完了，吐出返回按鈕
                 if (lineData.showReturnButton) {
                     setTimeout(() => {
-                        isWaitingMenu = true; clickHint.style.display = "none";
-                        returnHallBtn.style.display = "block"; // 開啟回歸大廳通道
+                        isWaitingMenu = true; 
+                        clickHint.style.display = "none";
+                        returnHallBtn.style.display = "block"; 
                     }, 1200);
                 }
             }
         }
 
-        // 生成 10x10 X/O 網格遮罩數據（可懸停複製）
+        // 生成 10x10 網格
         function renderMaskGrid() {
             maskGrid.innerHTML = "";
-            const oCoordinates = ["2,5", "4,1", "6,8", "8,3"]; // 基於0的陣列坐標：對應第3行第6列, 第5行第2列, 第7行第9列, 第9行第4列
+            const oCoordinates = ["2,5", "4,1", "6,8", "8,3"]; 
             
             for (let r = 0; r < 10; r++) {
                 const tr = document.createElement("tr");
@@ -219,7 +227,7 @@
         function checkAnswer() {
             const val = document.getElementById("wordInput").value.trim().toUpperCase();
             if (val === "WINE") {
-                // 回答正確，抹除謎題介面，滑入故事後半段高潮
+                // 回答正確：隱藏解謎區，解鎖狀態，開啟盲點，繼續跑後半部甦醒文本
                 inputPanel.style.display = "none";
                 maskGrid.style.display = "none";
                 errorMsg.style.display = "none";
@@ -237,7 +245,6 @@
 
         function navigateToCloser(event) {
             event.stopPropagation();
-            // 標記已經解開了西側的謎題，供 thecloser.html 自動開啟第二個解密面板
             localStorage.setItem("west_puzzle_solved", "true");
             window.location.href = "thecloser.html";
         }
