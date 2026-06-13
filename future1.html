@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>未來之廳</title>
+    <title>🌌 北側：未來之廳 — 逆轉的星盤</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -40,7 +40,6 @@
             100% { text-shadow: 0 0 14px rgba(74, 144, 226, 1), 0 0 25px rgba(74, 144, 226, 0.6); opacity: 1; }
         }
 
-        /* 邁向死路按鈕 */
         .action-container {
             display: none; width: 100%; max-width: 650px; margin: 15px auto 0 auto;
             text-align: center; animation: fadeInElement 1.5s ease-in-out forwards; pointer-events: auto;
@@ -58,7 +57,6 @@
             background-color: rgba(74, 144, 226, 0.03); box-shadow: 0 0 12px rgba(74, 144, 226, 0.2);
         }
 
-        /* 3D 命運星盤畫布核心外觀 */
         .astrolabe-wrapper {
             display: none; width: 120%; max-width: 360px; height: 360px; margin: 30px auto;
             position: relative; pointer-events: auto; text-align: center;
@@ -72,32 +70,25 @@
             transform: perspective(600px) rotateX(15deg); transition: box-shadow 0.3s;
         }
         .astrolabe-disk:active { cursor: grabbing; }
-        
-        /* 星盤內圈刻紋線 */
         .astrolabe-inner-ring {
-            position: absolute; top: 12%; left: 12%; width: 76%; height: 12%; border-radius: 50%;
+            position: absolute; top: 12%; left: 12%; width: 76%; height: 76%; border-radius: 50%;
             border: 1px dashed rgba(74, 144, 226, 0.15); pointer-events: none;
         }
 
-        /* 打亂順序的黃道占星符號 */
         .zodiac-node {
             position: absolute; width: 34px; height: 34px; line-height: 34px;
-            text-align: center; font-size: 16pt; color: #526875; font-family: 'Times New Roman', serif;
+            text-align: center; font-size: 16pt; color: #526875;
             transform: translate(-50%, -50%); transition: all 0.3s ease; pointer-events: auto;
         }
-        .zodiac-node:hover {
-            color: #4a90e2; text-shadow: 0 0 10px #4a90e2; font-size: 18pt;
-        }
-        /* 懸停符號顯示的極簡浮動文字提示 */
+        .zodiac-node:hover { color: #4a90e2; text-shadow: 0 0 10px #4a90e2; font-size: 18pt; }
         .zodiac-node::after {
             content: attr(data-hint); position: absolute; bottom: -20px; left: 50%;
             transform: translateX(-50%); font-size: 8pt; color: #3a4b57;
             opacity: 0; transition: opacity 0.3s; white-space: nowrap; font-family: 'Noto Serif TC', serif;
-            letter-spacing: 0; pointer-events: none;
+            pointer-events: none;
         }
         .zodiac-node:hover::after { opacity: 1; color: #4a90e2; }
 
-        /* 散發著深藍色冷火的3D旋轉指針 */
         .astrolabe-pointer {
             position: absolute; top: 50%; left: 50%; width: 6px; height: 145px;
             background: linear-gradient(to top, rgba(74,144,226,0) 0%, rgba(74,144,226,0.8) 70%, #ffffff 100%);
@@ -105,14 +96,12 @@
             pointer-events: none; border-radius: 3px;
             box-shadow: 0 0 12px #4a90e2, 0 0 25px rgba(74,144,226,0.4);
         }
-        /* 指針中心青銅軸心 */
         .astrolabe-center {
             position: absolute; top: 50%; left: 50%; width: 16px; height: 16px;
             background-color: #1a303d; border: 2px solid #4a90e2; border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; box-shadow: 0 0 8px rgba(0,0,0,0.8);
+            transform: translate(-50%, -50%); pointer-events: none;
         }
 
-        /* 最終命運卡牌區 */
         .fool-card-zone {
             display: none; text-align: center; margin-top: 25px; pointer-events: auto;
             animation: fadeInElement 1.8s ease-in-out forwards;
@@ -151,7 +140,7 @@
 
             <div class="action-container" id="initActionZone">
                 <button class="menu-button" onclick="goToDeadEnd(event)">
-                    走入毫無弱點的未來
+                    🧭 走入毫無弱點的未來
                 </button>
             </div>
 
@@ -161,14 +150,15 @@
                     <div class="zodiac-node" style="top:15%; left:50%;" data-angle="0" data-hint="天蠍座">♏</div>
                     <div class="zodiac-node" style="top:23%; left:75%;" data-angle="30" data-hint="雙子座">♊</div>
                     <div class="zodiac-node" style="top:41%; left:90%;" data-angle="60" data-hint="獅子座">♌</div>
-                    <div class="zodiac-node" style="top:65%; left:88%;" data-angle="90" data-hint="白羊座"> Aries ♈</div>
+                    <div class="zodiac-node" style="top:65%; left:88%;" data-angle="90" data-hint="白羊座">♈</div>
                     <div class="zodiac-node" style="top:83%; left:71%;" data-angle="120" data-hint="摩羯座">♑</div>
-                    <div class="zodiac-node" style="top:91%; left:46%;" data-angle="150" data-hint="巨蟹座"> Cancer ♋</div>
-                    <div class="zodiac-node" style="top:81%; left:22%;" data-angle="180" data-hint="雙魚座">♓</div> <div class="zodiac-node" style="top:61%; left:11%;" data-angle="210" data-hint="天秤座"> Libra ♎</div>
-                    <div class="zodiac-node" style="top:38%; left:12%;" data-angle="240" data-hint="金牛座"> Taurus ♉</div>
-                    <div class="zodiac-node" style="top:19%; left:26%;" data-angle="270" data-hint="水瓶座"> Aquarius ♒</div>
-                    <div class="zodiac-node" style="top:10%; left:50%;" data-angle="300" data-hint="射手座"> Sagittarius ♐</div>
-                    <div class="zodiac-node" style="top:20%; left:76%;" data-angle="330" data-hint="處女座"> Virgo ♍</div>
+                    <div class="zodiac-node" style="top:91%; left:46%;" data-angle="150" data-hint="巨蟹座">♋</div>
+                    <div class="zodiac-node" style="top:81%; left:22%;" data-angle="180" data-hint="雙魚座">♓</div> 
+                    <div class="zodiac-node" style="top:61%; left:11%;" data-angle="210" data-hint="天秤座">♎</div>
+                    <div class="zodiac-node" style="top:38%; left:12%;" data-angle="240" data-hint="金牛座">♉</div>
+                    <div class="zodiac-node" style="top:19%; left:26%;" data-angle="270" data-hint="水瓶座">♒</div>
+                    <div class="zodiac-node" style="top:10%; left:50%;" data-angle="300" data-hint="射手座">♐</div>
+                    <div class="zodiac-node" style="top:20%; left:76%;" data-angle="330" data-hint="處女座">♍</div>
                     
                     <div class="astrolabe-pointer" id="astrolabePointer"></div>
                     <div class="astrolabe-center"></div>
@@ -199,12 +189,11 @@
             { text: "你讀完最後一個字，那行文字忽然開始流血。紅色的液體從牆上滲出來，匯聚成新的句子：<br>「凡人，前方已是死路。想要破除不死的威壓，你必須先親自步入他那沒有弱點的絕望未來……然後，尋找折返的步伐。」", triggerActionBtn: true }
         ];
 
-        // 3D 倒流分段劇本
         const timeReverseScript = [
             { text: "你離開了那條死路。時間在你身上倒流了一小步——不多，但足夠。" },
             { text: "當你再次站在阿基里斯的偏廳時，一切都不一樣了。<br><br>冥河的黑水正在倒流。不是往低處流，而是逆著重力、逆著方向、逆著一切物理法則，從冰界邊緣縮回河的中央。水面上出現了密密麻麻的漣漪，像有數千條看不見的魚同時撞擊水面。" },
             { text: "阿基里斯的雕像劇烈震動。他的右手的繃帶開始鬆脫，露出底下沒有任何傷痕的皮膚——但那些皮膚正在龜裂，像乾涸的河床，像被遺忘的壁畫。<br><br>空氣中浮現出血紅色的字，一個一個地燃燒出來：<br>「逆天改命的英雄抹去了弱點，卻觸怒了神明。既然他拒絕了凡人的起點，神明便將他命運的最終終點——強制逆轉——成了他的第一道詛咒。」" },
-            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某種看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿——那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」", triggerAstrolabe: true }
+            { text: "青銅星盤在你面前轟然咬合。十二星座的符號同時亮起，發出深藍色的冷光。指針開始顫抖，不再是猶豫，而是被某線看不見的力量拉扯，指向……什麼都不指向。它在等待你的選擇。<br><br>星盤的邊緣浮現一行古老的銘文：<br>「他拒絕了起點。所以終點會回來找他。將指針撥向他原本的歸宿─那個黃道盡頭的<span class='highlight-last-house'>最後一宮</span>。那是神明降下的懲罰。」", triggerAstrolabe: true }
         ];
 
         const winScript = [
@@ -216,11 +205,7 @@
 
         let currentScript = initScript; let currentIndex = 0;
         let textAnimationLock = false; let isWaitingMenu = false;
-        
-        // 3D 拖曳物理引擎變數
-        let isDragging = false;
-        let currentAngle = 0;
-        let puzzleSolved = false;
+        let isDragging = false; let currentAngle = 0; let puzzleSolved = false;
 
         const storyWrapper = document.getElementById("storyWrapper");
         const clickHint = document.getElementById("clickHint");
@@ -230,7 +215,8 @@
         const astrolabePointer = document.getElementById("astrolabePointer");
         const foolCardZone = document.getElementById("foolCardZone");
 
-        window.addEventListener('pageshow', function(event) {
+        // 【安全防卡閥核心】
+        function checkAndRenderState() {
             storyWrapper.innerHTML = ""; initActionZone.style.display = "none"; astrolabeZone.style.display = "none"; foolCardZone.style.display = "none";
             clickHint.style.display = "block"; isWaitingMenu = false; textAnimationLock = false; currentIndex = 0;
 
@@ -241,7 +227,18 @@
                 currentScript = initScript;
             }
             showNextParagraph();
+        }
+
+        // 用 pageshow 與定時器雙重攔截上一頁快取，防止卡死
+        window.addEventListener('pageshow', function(event) {
+            checkAndRenderState();
         });
+
+        // 備用快照擦除器：如果發現退回時狀態還是老樣子，0.05秒內強制自行無感刷新
+        if (performance.navigation.type === 2) {
+            localStorage.setItem("future_dead_end_reached", "true");
+            location.reload();
+        }
 
         function gameContainerClicked() {
             if (textAnimationLock || isWaitingMenu) return;
@@ -270,60 +267,31 @@
             }
         }
 
-        /* ─── 3D 實時拖曳指針演算法 ─── */
-        function startDrag(e) {
-            if (puzzleSolved) return;
-            isDragging = true;
-            calculateAngle(e);
-        }
-
-        function doDrag(e) {
-            if (!isDragging || puzzleSolved) return;
-            calculateAngle(e);
-        }
-
+        function startDrag(e) { if (puzzleSolved) return; isDragging = true; calculateAngle(e); }
+        function doDrag(e) { if (!isDragging || puzzleSolved) return; calculateAngle(e); }
         function endDrag() {
             if (!isDragging || puzzleSolved) return;
             isDragging = false;
-            
-            // 核心解謎檢查：雙魚座在 180 度（正下方位置），給予前後 12 度的寬容判定區
             if (currentAngle >= 168 && currentAngle <= 192) {
-                puzzleSolved = true;
-                currentAngle = 180; // 強制完美吸附吸合
+                puzzleSolved = true; currentAngle = 180;
                 astrolabePointer.style.transform = `translate(-50%, -100%) rotate(${currentAngle}deg)`;
                 astrolabeDisk.style.boxShadow = "0 0 40px #4a90e2, inset 0 0 30px rgba(74,144,226,0.3)";
-                
-                // 播放金屬齒輪咬合死鎖動畫
                 setTimeout(() => {
-                    astrolabeZone.style.display = "none";
-                    isWaitingMenu = false;
-                    clickHint.style.display = "block";
-                    currentScript = winScript;
-                    currentIndex = 0;
-                    showNextParagraph();
+                    astrolabeZone.style.display = "none"; isWaitingMenu = false; clickHint.style.display = "block";
+                    currentScript = winScript; currentIndex = 0; showNextParagraph();
                 }, 1000);
             }
         }
 
         function calculateAngle(e) {
             const rect = astrolabeDisk.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            // 兼容手機端觸控與滑鼠事件
+            const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            
-            const deltaX = clientX - centerX;
-            const deltaY = clientY - centerY;
-            
-            // 計算相對於正上方(0度)的夾角
+            const deltaX = clientX - centerX; const deltaY = clientY - centerY;
             let angle = Math.atan2(deltaX, -deltaY) * (180 / Math.PI);
             if (angle < 0) angle += 360;
-            
             currentAngle = Math.round(angle);
-            
-            // 動態驅動 3D 指針與星盤微小的傾斜折射光感
             astrolabePointer.style.transform = `translate(-50%, -100%) rotate(${currentAngle}deg)`;
             astrolabeDisk.style.transform = `perspective(600px) rotateX(15deg) rotateY(${(deltaX / rect.width) * 10}deg)`;
         }
