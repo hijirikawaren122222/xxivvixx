@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Κήρ</title>
+    <title>Κήρ - 神明的宴會</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -82,7 +82,7 @@
             position: block;
             max-width: 700px;
             margin: 100px auto 0 auto;
-            min-height: 350px;
+            min-height: 320px; /* 微調縮小高度，讓選項上移 */
         }
 
         .story-paragraph {
@@ -136,18 +136,18 @@
             100% { opacity: 0.3; }
         }
 
-        /* 選擇肢容器 - 加上漸進浮現動畫 */
+        /* 選擇肢容器 - 提高至畫面更顯眼的位置 */
         .choice-container {
             position: block;
             max-width: 650px;
-            margin: 40px auto 0 auto;
+            margin: 15px auto 0 auto; /* 縮小上方間距，將選項顯著上移 */
             display: none; 
             text-align: center;
             animation: fadeInChoice 1.8s ease-in-out forwards;
         }
 
         @keyframes fadeInChoice {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -156,8 +156,8 @@
             width: 100%;
             background-color: rgba(15, 18, 22, 0.85);
             border: 1px solid #343a40;
-            padding: 18px 20px;
-            margin-bottom: 20px;
+            padding: 18px 25px;
+            margin-bottom: 18px;
             color: #b5b9be;
             font-size: 11pt;
             letter-spacing: 2px;
@@ -247,7 +247,7 @@
         const scriptData = {
             intro: [
                 { text: "雨不是從天空落下，而是從地底、牆縫、你的骨頭縫隙裡滲出來。<br>你已經在這條石板路上走了很久，久到分不清自己是醒著還是在做夢。每一次呼吸，肺裡都像灌進了<span class='highlight-green'>黑色的水銀</span>。<br>路燈是死去的月亮。它們發出的光不是黃色，而是<span class='highlight-green'>硫磺般的青綠</span>，把整條街照得像一座沉沒的祭壇。<br>你的衣服濕透了，貼在皮膚上，像第二層正在腐爛的皮。" },
-                { text: "然後——你看見他了。<br>一個身影從雨幕中走出來，不是走，更像是雨水把他凝結成人形。He很高，高到不應該存在於人間。他沒有五官，臉上只有一片光滑的黑暗，但你感覺得到他在看你。<br>他伸出手。<br>那隻手穿過你的胸膛，沒有痛，只有一種被掏空的感覺。當他抽回手時，你低頭——自己毫髮傷，但掌心多了一樣東西。<br>不是一樣。是兩樣。" },
+                { text: "然後——你看見他了。<br>一個身影從雨幕中走出來，不是走，更像是雨水把他凝結成人形。他很高，高到不應該存在於人間。他沒有五官，臉上只有一片光滑的黑暗，但你感覺得到他在看意。<br>他伸出手。<br>那隻手穿過你的胸膛，沒有痛，只有一種被掏空的感覺。當他抽回手時，你低頭——自己毫髮傷，但掌心多了一樣東西。<br>不是一樣。是兩樣。" },
                 { text: "第一樣你認得：一封黑色的信函。火漆上壓著一隻睜開的眼睛，瞳孔深處有<span class='highlight-gold'>金色的火焰</span>在燃燒。那是邀請函，邀請你參加一場「神明的宴會」。<br>第二樣你從未見過：一個<span class='highlight-gold'>黑色蕾絲眼罩</span>。它輕得像霧，摸起來卻有冰涼的觸感，彷彿剛從某個死去的人的臉上取下來。眼罩的內側，用銀線繡著一行極小的古希臘文——你勉強辨認出幾個字：<br><span class='highlight-greek'>「閉上凡人的眼，才能看見神的真實。」</span>" },
                 { text: "那個人形的雨水已經消失了。只剩下你和這兩樣東西，站在暴雨中央。<br>不遠處，一棟建築從黑暗中浮現。它原本並不在那裡——或者它一直在，只是你的肉眼看不見。大門微啟，裡面透出溫暖卻詭異的<span class='highlight-gold'>金光</span>，像一隻半睜的獸瞳。<br>雨水落在眼罩上，沒有濡濕，反而像被吞噬了。" },
                 { text: "你知道，這是一個選擇。或許是這輩子唯一真正自由的選擇。" }
@@ -313,7 +313,6 @@
                 setTimeout(() => { p.classList.add("visible"); }, 50);
                 currentIndex++;
 
-                // 走到路線一紅字終點，更改提示為「摘下眼罩」並跳轉
                 if (lineData.isNextPage) {
                     clickHint.innerHTML = "【 摘下眼罩 】";
                     gameContainer.onclick = function() {
@@ -331,14 +330,13 @@
             isWaitingForChoice = true;
             clickHint.style.display = "none";
             
-            // 強制重設容器 display 觸發 CSS 淡入動畫
             choiceContainer.style.display = "none";
             choiceContainer.innerHTML = `
                 <button class="choice-button" onclick="selectRoute('choice1', event)">
-                    【選擇一：掩上黑色蕾絲眼罩，閉上雙眼，走入宴會】
+                    掩上黑色蕾絲眼罩，閉上雙眼，走入宴會
                 </button>
                 <button class="choice-button" onclick="selectRoute('choice2', event)">
-                    【選擇二：拋下所有東西——信函與眼罩，轉身逃入雨中】
+                    拋下所有東西——信函與眼罩，轉身逃入雨中
                 </button>
             `;
             choiceContainer.style.display = "block";
